@@ -29,6 +29,9 @@
                 <th>
                     Email
                 </th>
+                <th>
+
+                </th>
             </tr>
         </thead>
 
@@ -49,6 +52,12 @@
                         </td>
                         <td>
                             @supplier.Email
+                        </td>
+                        <td>
+                            <div class="row float-right">
+                                <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(supplier.Id))"><span class="oi oi-pencil"></span></button></div>
+                                <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(supplier.Id))"><span class="oi oi-x"></span></button></div>
+                            </div>
                         </td>
                     </tr>
                 }

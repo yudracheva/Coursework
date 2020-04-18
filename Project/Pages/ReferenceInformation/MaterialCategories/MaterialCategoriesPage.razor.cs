@@ -25,5 +25,15 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
             isLoad = true;
         }
+
+        protected void Edit(int id)
+        {
+            NavigationManager.NavigateTo($"/material-categories/{id:0}");
+        }
+
+        protected void Remove(int id)
+        {
+            // TODO: Добавить удаление
+        }
     }
 }

@@ -20,6 +20,9 @@
                 <th>
                     Наименование
                 </th>
+                <th>
+                    
+                </th>
             </tr>
         </thead>
 
@@ -28,11 +31,17 @@
             <tbody>
                 @foreach (var category in materialСategories)
                 {
-                    <tr>
-                        <td>
-                            <a href="/material-categories/@category.Id.ToString("0")">@category.Name</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <a href="/material-categories/@category.Id.ToString("0")">@category.Name</a>
+                    </td>
+                    <td>
+                        <div class="row float-right">
+                            <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(category.Id))"><span class="oi oi-pencil"></span></button></div>
+                            <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(category.Id))"><span class="oi oi-x"></span></button></div>
+                        </div>
+                    </td>
+                </tr>
                 }
             </tbody>
         }

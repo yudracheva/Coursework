@@ -29,5 +29,15 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
             isLoad = true;
         }
+
+        protected void Edit(int id)
+        {
+            NavigationManager.NavigateTo($"/suppliers/{id:0}");
+        }
+
+        protected void Remove(int id)
+        {
+            // TODO: Добавить удаление
+        }
     }
 }
