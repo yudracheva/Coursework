@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Project.Interfaces;
 using Project.Models;
+using Project.Models.ReferenceInformation;
 using System;
 
 namespace Project.Pages.ReferenceInformation.Suppliers
