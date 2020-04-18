@@ -19,11 +19,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnInitialized()
         {
-            isLoad = false;
-
-            materialСategories = DatabaseProvider.GetMaterialСategories();
-
-            isLoad = true;
+            Update();
         }
 
         protected void Edit(int id)
@@ -33,7 +29,17 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected void Remove(int id)
         {
-            // TODO: Добавить удаление
+            DatabaseProvider.RemoveMaterialCategory(id);
+            Update();
+        }
+
+        protected void Update()
+        {
+            isLoad = false;
+
+            materialСategories = DatabaseProvider.GetMaterialСategories();
+
+            isLoad = true;
         }
     }
 }

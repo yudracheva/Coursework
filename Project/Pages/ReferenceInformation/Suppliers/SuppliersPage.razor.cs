@@ -20,11 +20,7 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected override void OnInitialized()
         {
-            isLoad = false;
-
-            suppliers = DatabaseProvider.GetSuppliers();
-
-            isLoad = true;
+            Update();
         }
 
         protected void Edit(int id)
@@ -34,7 +30,17 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected void Remove(int id)
         {
-            // TODO: Добавить удаление
+            DatabaseProvider.RemoveSupplier(id);
+            Update();
+        }
+
+        protected void Update()
+        {
+            isLoad = false;
+
+            suppliers = DatabaseProvider.GetSuppliers();
+
+            isLoad = true;
         }
     }
 }

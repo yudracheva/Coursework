@@ -19,11 +19,7 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected override void OnInitialized()
         {
-            isLoad = false;
-
-            materials = DatabaseProvider.GetMaterials();
-
-            isLoad = true;
+            Update();
         }
 
         protected void Edit(int id)
@@ -33,7 +29,17 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected void Remove(int id)
         {
-            // TODO: Добавить удаление
+            DatabaseProvider.RemoveMaterial(id);
+            Update();
+        }
+
+        public void Update()
+        {
+            isLoad = false;
+
+            materials = DatabaseProvider.GetMaterials();
+
+            isLoad = true;
         }
     }
 }

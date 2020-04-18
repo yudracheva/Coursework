@@ -49,8 +49,15 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected void Save()
         {
-            Console.WriteLine("Save");
-            NavigationManager.NavigateTo("/materials");
+            try
+            {
+                DatabaseProvider.SaveMaterial(material);
+                NavigationManager.NavigateTo("/materials");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+            }
         }
     }
 }

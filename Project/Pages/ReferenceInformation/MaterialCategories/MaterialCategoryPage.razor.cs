@@ -49,8 +49,15 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected void Save()
         {
-            Console.WriteLine("Save");
-            NavigationManager.NavigateTo("/suppliers");
+            try
+            {
+                DatabaseProvider.SaveMaterialCategory(materialCategory);
+                NavigationManager.NavigateTo("/material-categories");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+            }
         }
     }
 }

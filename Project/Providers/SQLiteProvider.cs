@@ -253,7 +253,7 @@ namespace Project.Providers
 
             var sql = @"select ID, 
 	                           NAME
-                          from MATERIALS";
+                          from MATERIALS_CATEGORIES";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {

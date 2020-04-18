@@ -1,54 +1,54 @@
 ﻿@page "/material-categories"
 @inherits MaterialCategoryPageIndex
 
-<h3>Поставщики</h3>
+<h3>Категория материалов</h3>
 
 @if (isLoad)
 {
-<div class="row mb-2">
-    <div class="col">
-        @{
+    <div class="row mb-2">
+        <div class="col">
+            @{
                 var adressToCreate = "/material-categories/new";
-        }
-        <button class="btn btn-sm btn-outline-info" @onclick="(()=>NavigationManager.NavigateTo(adressToCreate))">Создать</button>
+            }
+            <button class="btn btn-sm btn-outline-info" @onclick="(()=>NavigationManager.NavigateTo(adressToCreate))">Создать</button>
+        </div>
     </div>
-</div>
 
-<table class="table table-striped table-hover table-sm">
-    <thead>
-        <tr>
-            <th>
-                Наименование
-            </th>
-            <th>
+    <table class="table table-striped table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Наименование
+                </th>
+                <th>
 
-            </th>
-        </tr>
-    </thead>
+                </th>
+            </tr>
+        </thead>
 
-    @if (materialСategories != null)
+        @if (materialСategories != null)
         {
-    <tbody>
-        @foreach (var category in materialСategories)
+            <tbody>
+                @foreach (var category in materialСategories)
                 {
-        <tr>
-            <td>
-                <a href="/material-categories/@category.Id.ToString("0")">@category.Name</a>
-            </td>
-            <td>
-                <div class="row float-right">
-                    <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(category.Id))"><span class="oi oi-pencil"></span></button></div>
-                    <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(category.Id))"><span class="oi oi-x"></span></button></div>
-                </div>
-            </td>
-        </tr>
+                    <tr>
+                        <td>
+                            <a href="/material-categories/@category.Id.ToString("0")">@category.Name</a>
+                        </td>
+                        <td>
+                            <div class="row float-right">
+                                <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(category.Id))"><span class="oi oi-pencil"></span></button></div>
+                                <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(category.Id))"><span class="oi oi-x"></span></button></div>
+                            </div>
+                        </td>
+                    </tr>
                 }
-    </tbody>
+            </tbody>
         }
-</table>
+    </table>
 
 }
 else
 {
-<LoadComponent />
+    <LoadComponent />
 }
