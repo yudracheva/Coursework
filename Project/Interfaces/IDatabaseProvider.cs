@@ -1,9 +1,5 @@
-﻿using Project.Models;
-using Project.Models.ReferenceInformation;
-using System;
+﻿using Project.Models.ReferenceInformation;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project.Interfaces
 {
@@ -44,7 +40,7 @@ namespace Project.Interfaces
         /// <param name="id">Ижентификатор категории</param>
         /// <returns>Категорий материалов</returns>
         MaterialСategory GetMaterialСategory(int id);
-        
+
         /// <summary>
         /// Возвратает запрощенный банк
         /// </summary>
