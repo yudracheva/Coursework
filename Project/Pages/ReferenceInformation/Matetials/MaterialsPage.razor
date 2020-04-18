@@ -1,0 +1,63 @@
+﻿@page "/materials"
+@inherits MaterialsPageIndex
+
+<h3>Материалы</h3>
+
+@if (isLoad)
+{
+    <div class="row mb-2 ">
+        <div class="col">
+            @{
+                var adressToCreate = "/materials/new";
+            }
+            <button class="btn btn-sm btn-outline-info" @onclick="(()=>NavigationManager.NavigateTo(adressToCreate))">Создать</button>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Наименование
+                </th>
+                <th>
+                    Категория
+                </th>
+                <th>
+                    Поставщика
+                </th>
+            </tr>
+        </thead>
+
+        @if (materials != null)
+        {
+            <tbody>
+                @foreach (var material in materials)
+                {
+                    <tr>
+                        <td>
+                            <a href="/materials/@material.Id.ToString("0")">@material.Name</a>
+                        </td>
+                        <td>
+                            @if (!String.IsNullOrEmpty(material.Сategory?.Name))
+                            {
+                                <a href="/category-materials/@material.Сategory.Id.ToString("0")">@material.Сategory.Name</a>
+                            }
+                        </td>
+                        <td>
+                            @if (!String.IsNullOrEmpty(material.Supplier?.OrganizationName))
+                            {
+                                <a href="/suppliers/@material.Supplier.Id.ToString("0")">@material.Supplier.OrganizationName</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+
+}
+else
+{
+    <LoadComponent />
+}

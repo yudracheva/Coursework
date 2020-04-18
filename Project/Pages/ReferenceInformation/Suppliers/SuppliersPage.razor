@@ -1,0 +1,63 @@
+﻿@page "/suppliers"
+@inherits SuppliersPageIndex
+
+<h3>Поставщики</h3>
+
+@if (isLoad)
+{
+    <div class="row mb-2">
+        <div class="col">
+            @{
+                var adressToCreate = "/suppliers/new";
+            }
+            <button class="btn btn-sm btn-outline-info" @onclick="(()=>NavigationManager.NavigateTo(adressToCreate))">Создать</button>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Наименование
+                </th>
+                <th>
+                    ИНН
+                </th>
+                <th>
+                    КПП
+                </th>
+                <th>
+                    Email
+                </th>
+            </tr>
+        </thead>
+
+        @if (suppliers != null)
+        {
+            <tbody>
+                @foreach (var supplier in suppliers)
+                {
+                    <tr>
+                        <td>
+                            <a href="/suppliers/@supplier.Id.ToString("0")">@supplier.OrganizationName</a>
+                        </td>
+                        <td>
+                            @supplier.INN
+                        </td>
+                        <td>
+                            @supplier.KPP
+                        </td>
+                        <td>
+                            @supplier.Email
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+
+}
+else
+{
+    <LoadComponent />
+}
