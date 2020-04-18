@@ -42,9 +42,9 @@
                             <a href="/materials/@material.Id.ToString("0")">@material.Name</a>
                         </td>
                         <td>
-                            @if (!String.IsNullOrEmpty(material.Сategory?.Name))
+                            @if (!String.IsNullOrEmpty(material.Category?.Name))
                             {
-                                <a href="/category-materials/@material.Сategory.Id.ToString("0")">@material.Сategory.Name</a>
+                                <a href="/category-materials/@material.Category.Id.ToString("0")">@material.Category.Name</a>
                             }
                         </td>
                         <td>

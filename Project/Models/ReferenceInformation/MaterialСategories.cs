@@ -3,7 +3,7 @@
     /// <summary>
     /// Категории материалов
     /// </summary>
-    public class MaterialСategory
+    public class MaterialCategory
     {
         /// <summary>
         /// Идентификатор категории материалов

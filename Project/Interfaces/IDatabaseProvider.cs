@@ -39,7 +39,7 @@ namespace Project.Interfaces
         /// </summary>
         /// <param name="id">Ижентификатор категории</param>
         /// <returns>Категорий материалов</returns>
-        MaterialСategory GetMaterialСategory(int id);
+        MaterialCategory GetMaterialCategory(int id);
 
         /// <summary>
         /// Возвратает запрощенный банк
@@ -52,7 +52,7 @@ namespace Project.Interfaces
         /// Возвращает список категорий
         /// </summary>
         /// <returns>Список категорий</returns>
-        List<MaterialСategory> GetMaterialСategories();
+        List<MaterialCategory> GetMaterialСategories();
 
         /// <summary>
         /// Возвращает список банков
@@ -67,10 +67,22 @@ namespace Project.Interfaces
         void SaveSupplier(Supplier supplier);
 
         /// <summary>
-        /// Сохраняет или обновляет банк
+        /// Удаление поставщика
         /// </summary>
-        /// <param name="supplier">банк</param>
+        /// <param name="id">ИДентификатор поставщика</param>
+        void RemoveSupplier(int id);
+
+        /// <summary>
+        /// Сохраняет банк
+        /// </summary>
+        /// <param name="bank">Банк</param>
         void SaveBank(Bank bank);
+
+        /// <summary>
+        /// Удаление банка
+        /// </summary>
+        /// <param name="id">ИДентификатор банка</param>
+        void RemoveBank(int id);
 
         /// <summary>
         /// Сохраняет или обновляет материал
@@ -79,9 +91,21 @@ namespace Project.Interfaces
         void SaveMaterial(Material material);
 
         /// <summary>
+        /// Удаление материала
+        /// </summary>
+        /// <param name="id">ИДентификатор материала</param>
+        void RemoveMaterial(int id);
+
+        /// <summary>
         /// Сохраняет или обновляет категорию материала
         /// </summary>
-        /// <param name="materialСategory">Категория материала</param>
-        void SaveMaterialСategory(MaterialСategory materialСategory);
+        /// <param name="materialCategory">Категория материала</param>
+        void SaveMaterialCategory(MaterialCategory materialCategory);
+
+        /// <summary>
+        /// Удаление категории материала
+        /// </summary>
+        /// <param name="id">ИДентификатор категории материала</param>
+        void RemoveMaterialCategory(int id);
     }
 }

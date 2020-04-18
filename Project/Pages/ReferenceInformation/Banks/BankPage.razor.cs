@@ -49,8 +49,15 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected void Save()
         {
-            Console.WriteLine("Save");
-            NavigationManager.NavigateTo("/banks");
+            try
+            {
+                DatabaseProvider.SaveBank(bank);
+                NavigationManager.NavigateTo("/banks");
+            }
+            catch (Exception ex)
+            {
+                // TODO: Добавить обработку исключения
+            }
         }
     }
 }

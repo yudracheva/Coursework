@@ -21,7 +21,13 @@
                     Наименование
                 </th>
                 <th>
-
+                    БИК
+                </th>
+                <th>
+                    Корреспондентский счёт
+                </th>
+                <th>
+                    
                 </th>
             </tr>
         </thead>
@@ -31,17 +37,23 @@
             <tbody>
                 @foreach (var bank in banks)
                 {
-                    <tr>
-                        <td>
-                            <a href="/banks/@bank.Id.ToString("0")">@bank.Name</a>
-                        </td>
-                        <td>
-                            <div class="row float-right">
-                                <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(bank.Id))"><span class="oi oi-pencil"></span></button></div>
-                                <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(bank.Id))"><span class="oi oi-x"></span></button></div>
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <a href="/banks/@bank.Id.ToString("0")">@bank.Name</a>
+                    </td>
+                    <td>
+                        @bank.Bik
+                    </td>
+                    <td>
+                        @bank.CorrespondentAccount
+                    </td>
+                    <td>
+                        <div class="row float-right">
+                            <div class="col-1 mr-1"><button class="btn btn-sm btn-outline-secondary" title="Редактировать" @onclick="(()=> Edit(bank.Id))"><span class="oi oi-pencil"></span></button></div>
+                            <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(bank.Id))"><span class="oi oi-x"></span></button></div>
+                        </div>
+                    </td>
+                </tr>
                 }
             </tbody>
         }

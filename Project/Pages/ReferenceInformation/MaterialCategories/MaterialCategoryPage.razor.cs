@@ -16,7 +16,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected MaterialСategory materialСategory;
+        protected MaterialCategory materialCategory;
 
         protected string oldName;
 
@@ -28,12 +28,12 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
             if (Id != 0)
             {
-                materialСategory = DatabaseProvider.GetMaterialСategory(Id);
-                oldName = materialСategory?.Name;
+                materialCategory = DatabaseProvider.GetMaterialCategory(Id);
+                oldName = materialCategory?.Name;
             }
             else
             {
-                materialСategory = new MaterialСategory();
+                materialCategory = new MaterialCategory();
             }
 
             isLoad = true;
@@ -41,10 +41,10 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected string GetDescription()
         {
-            if (materialСategory.Id == 0)
+            if (materialCategory.Id == 0)
                 return "";
 
-            return materialСategory.Name;
+            return materialCategory.Name;
         }
 
         protected void Save()

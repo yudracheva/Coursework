@@ -33,6 +33,6 @@
         /// <summary>
         /// Категория материала
         /// </summary>
-        public MaterialСategory Сategory { get; set; }
+        public MaterialCategory Category { get; set; }
     }
 }

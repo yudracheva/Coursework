@@ -19,21 +19,29 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnInitialized()
         {
-            isLoad = false;
-
-            banks = DatabaseProvider.GetBanks();
-
-            isLoad = true;
+            UpdateData();
         }
 
         protected void Edit(int id)
         {
-            NavigationManager.NavigateTo($"/banks/{id.ToString("0")}");
+            NavigationManager.NavigateTo($"/banks/{id:0}");
         }
 
         protected void Remove(int id)
         {
-            // TODO: Добавить удаление
+            DatabaseProvider.RemoveBank(id);
+            UpdateData();
+        }
+
+        private void UpdateData()
+        {
+            isLoad = false;
+            
+            banks = DatabaseProvider.GetBanks();
+
+            isLoad = true;
+
+            StateHasChanged();
         }
     }
 }

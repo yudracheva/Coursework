@@ -13,7 +13,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected List<MaterialСategory> materialСategories;
+        protected List<MaterialCategory> materialСategories;
 
         protected bool isLoad;
 

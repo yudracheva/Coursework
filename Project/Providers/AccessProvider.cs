@@ -44,7 +44,7 @@ namespace Project.Providers
                     Id = 1,
                     OrganizationName = "Поставщик №1"
                 },
-                Сategory = new MaterialСategory()
+                Category = new MaterialCategory()
                 {
                     Id = 1,
                     Name = "Категория №1"
@@ -67,7 +67,7 @@ namespace Project.Providers
                     Id = 1,
                     OrganizationName = "Поставщик №1"
                 },
-                Сategory = new MaterialСategory()
+                Category = new MaterialCategory()
                 {
                     Id = 1,
                     Name = "Категория №1"
@@ -76,11 +76,11 @@ namespace Project.Providers
         };
         }
 
-        public List<MaterialСategory> GetMaterialСategories()
+        public List<MaterialCategory> GetMaterialСategories()
         {
-            return new List<MaterialСategory>()
+            return new List<MaterialCategory>()
             {
-                new MaterialСategory()
+                new MaterialCategory()
                 {
                     Id = 1,
                     Name = "Категория"
@@ -88,9 +88,9 @@ namespace Project.Providers
             };
         }
 
-        public MaterialСategory GetMaterialСategory(int id)
+        public MaterialCategory GetMaterialCategory(int id)
         {
-            return new MaterialСategory()
+            return new MaterialCategory()
             {
                 Id = 1,
                 Name = "Категория"
@@ -122,6 +122,11 @@ namespace Project.Providers
             };
         }
 
+        public void RemoveBank(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void SaveBank(Bank bank)
         {
             // TODO: Реализовать сохранение
@@ -132,7 +137,7 @@ namespace Project.Providers
             // TODO: Реализовать сохранение
         }
 
-        public void SaveMaterialСategory(MaterialСategory materialСategory)
+        public void SaveMaterialCategory(MaterialCategory materialCategory)
         {
             // TODO: Реализовать сохранение
         }
@@ -140,6 +145,26 @@ namespace Project.Providers
         public void SaveSupplier(Supplier supplier)
         {
             // TODO: Реализовать сохранение
+        }
+
+        public void UpdateBank(Bank bank)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveSupplier(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveMaterial(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveMaterialCategory(int id)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
