@@ -1,11 +1,26 @@
-﻿using System;
+﻿using Project.Models.ReferenceInformation;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project.Models.Documents
 {
-    public class ReceiptOfMaterials
+    /// <summary>
+    /// Документ "Поступление материалов"
+    /// </summary>
+    public class ReceiptOfMaterials : Document
     {
+        /// <summary>
+        /// Заказ поставщику
+        /// </summary>
+        public OrdersToSuppliers Order { get; set; }
+
+        /// <summary>
+        /// Поставщик
+        /// </summary>
+        public Supplier Supplier { get; set; }
+
+        /// <summary>
+        /// Список материалов
+        /// </summary>
+        public List<LineOfMaterials> Materials { get; set; }
     }
 }

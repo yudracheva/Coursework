@@ -1,11 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Project.Models.ReferenceInformation;
 
 namespace Project.Models.Documents
 {
-    public class PaymentRequest
+    /// <summary>
+    /// Документ "Платежное требование"
+    /// </summary>
+    public class PaymentRequest : Document
     {
+        /// <summary>
+        /// Поставщик
+        /// </summary>
+        public Supplier Supplier { get; set; }
+
+        /// <summary>
+        /// Сумма к оплате
+        /// </summary>
+        public decimal Sum { get; set; }
     }
 }

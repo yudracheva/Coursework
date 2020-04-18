@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project.Models.Documents
 {
-    public class AdjustmentOfTheBalanceOfMaterials
+    /// <summary>
+    /// Документ "Корректировка остатков"
+    /// </summary>
+    public class AdjustmentOfTheBalanceOfMaterials : Document
     {
+        /// <summary>
+        /// Список материалов
+        /// </summary>
+        public List<LineOfMaterials> Materials { get; set; }
     }
 }
