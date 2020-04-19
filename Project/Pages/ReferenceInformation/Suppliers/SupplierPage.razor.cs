@@ -2,6 +2,8 @@
 using Project.Interfaces;
 using Project.Models.ReferenceInformation;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Project.Pages.ReferenceInformation.Suppliers
 {
@@ -18,9 +20,13 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected Supplier supplier;
 
+        protected List<Bank> banks;
+
         protected string oldName;
 
         protected bool isLoad;
+
+        protected int selectedBank;
 
         protected override void OnInitialized()
         {
@@ -30,11 +36,14 @@ namespace Project.Pages.ReferenceInformation.Suppliers
             {
                 supplier = DatabaseProvider.GetSupplier(Id);
                 oldName = supplier?.OrganizationName;
+                selectedBank = supplier.Bank.Id;
             }
             else
             {
                 supplier = new Supplier();
             }
+
+            banks = DatabaseProvider.GetBanks();
 
             isLoad = true;
         }
@@ -51,6 +60,16 @@ namespace Project.Pages.ReferenceInformation.Suppliers
         {
             try
             {
+                if (selectedBank != 0)
+                {
+                    var bank = banks.Where(d => d.Id.Equals(selectedBank)).FirstOrDefault();
+                    supplier.Bank = bank;
+                }
+                else
+                {
+                    supplier.Bank = null;
+                }
+
                 DatabaseProvider.SaveSupplier(supplier);
                 NavigationManager.NavigateTo("/suppliers");
             }
