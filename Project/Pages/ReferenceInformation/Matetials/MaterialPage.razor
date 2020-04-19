@@ -9,7 +9,7 @@
         <h3>Материал @GetDescription()</h3>
 
         <form>
-            @if (material.Id == 0)
+            @if (material.Id != 0)
             {
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">Идентификатор: </label>
@@ -29,20 +29,26 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Категория:</label>
                 <div class="col-sm-9">
-                    @*<select class="form-control form-control-sm" @bind="@matetial.Category">
-
-                            <option se>Small select</option>
-                        </select>*@
+                    <select class="form-control form-control-sm" @bind="selectedMaterialCategory">
+                        <option value=0>@("<Пусто>")</option>
+                        @foreach (var materialCategory in materialCategories)
+                        {
+                            <option value=@materialCategory.Id>@materialCategory.Name</option>
+                        }
+                    </select>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Поставщик:</label>
                 <div class="col-sm-9">
-                    @*<select class="form-control form-control-sm" @bind="@matetial.Category">
-
-                            <option se>Small select</option>
-                        </select>*@
+                    <select class="form-control form-control-sm" @bind="selectedSupplier">
+                        <option value=0>@("<Пусто>")</option>
+                        @foreach (var supplier in suppliers)
+                        {
+                            <option value=@supplier.Id>@supplier.OrganizationName</option>
+                        }
+                    </select>
                 </div>
             </div>
 

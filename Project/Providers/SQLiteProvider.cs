@@ -199,14 +199,14 @@ namespace Project.Providers
 	                           m.DESCRIPTION,
 	                           m.SUPPLIER,
 	                           m.DELIVERIESSTOPPED,
-	                           m.Сategory,
+	                           m.Category,
 	                           s.NAME as SUPPLIERNAME,
 	                           c.NAME as CATEGORYNAME
                           from MATERIALS m
                      left join SUPPLIERS s
                             on m.SUPPLIER = s.ID
                      left join MATERIALS_CATEGORIES c
-                            on m.Сategory = c.ID";
+                            on m.Category = c.ID";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
@@ -423,7 +423,7 @@ namespace Project.Providers
             if (id == 0)
                 id = GetGenNumber_Material();
 
-            var sql = @"insert or replace into MATERIALS (ID, NAME, DESCRIPTION, SUPPLIER, DELIVERIESSTOPPED, Сategory)
+            var sql = @"insert or replace into MATERIALS (ID, NAME, DESCRIPTION, SUPPLIER, DELIVERIESSTOPPED, Category)
                                   values (@Id, @Name, @Description, @Supplier, @DeliveriesStopped, @Category)";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))

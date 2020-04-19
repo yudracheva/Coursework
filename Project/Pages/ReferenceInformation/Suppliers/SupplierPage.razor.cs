@@ -36,7 +36,7 @@ namespace Project.Pages.ReferenceInformation.Suppliers
             {
                 supplier = DatabaseProvider.GetSupplier(Id);
                 oldName = supplier?.OrganizationName;
-                selectedBank = supplier.Bank.Id;
+                selectedBank = supplier.Bank?.Id ?? 0;
             }
             else
             {
