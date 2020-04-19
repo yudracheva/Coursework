@@ -1,4 +1,5 @@
 ﻿using Project.Interfaces;
+using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
 using System.Collections.Generic;
 
@@ -163,6 +164,26 @@ namespace Project.Providers
         }
 
         public void RemoveMaterialCategory(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveActOfReceipt(ActOfReceipt document)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveActOfReceipt(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ActOfReceipt GetActOfReceipt(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ActOfReceipt> GetActsOfReceipt()
         {
             throw new System.NotImplementedException();
         }

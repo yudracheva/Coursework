@@ -1,4 +1,5 @@
 ﻿using Project.Interfaces;
+using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
 using Project.Utils;
 using System;
@@ -640,6 +641,86 @@ namespace Project.Providers
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        public void SaveActOfReceipt(ActOfReceipt document)
+        {
+            var id = document.Number;
+            if (id == 0)
+                id = GetGenNumber_ActOfReceipt();
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                // Очистим все строки, а потом добавим
+                var sql = @"delete from RECEIPT_OF_MATERIALS where ID = @Id";
+
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                sql = @"insert or replace into SUPPLIERS (DocumentNumber, DocumentDate, Number, Supplier, Material, Count, Sum)
+                                                  values (@DocumentNumber, @DocumentDate, @Number, @Supplier, @Material, @Count, @Sum)";
+
+                foreach (var item in document.Materials)
+                {
+                    using (var cmd = new SQLiteCommand(sql, con))
+                    {
+                        cmd.AddParameter("@DocumentNumber", id);
+                        cmd.AddParameter("@DocumentDate", document.CreatedDate.ToLongDateString());
+                        cmd.AddParameter("@Number", item.Number);
+                        cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
+                        cmd.AddParameter("@Material", item.Material?.Id ?? 0);
+                        cmd.AddParameter("@Count", item.Count);
+                        cmd.AddParameter("@Sum", item.Sum);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        private int GetGenNumber_ActOfReceipt()
+        {
+            var sql = @"select max(ID) as ID from RECEIPT_OF_MATERIALS";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    using (var dbReader = cmd.ExecuteReader())
+                    {
+                        if (dbReader.Read())
+                        {
+                            var result = dbReader.GetInt("ID");
+                            return result + 1;
+                        }
+                    }
+                }
+            }
+
+            return 1;
+        }
+
+        public void RemoveActOfReceipt(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActOfReceipt GetActOfReceipt(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ActOfReceipt> GetActsOfReceipt()
+        {
+            throw new NotImplementedException();
         }
     }
 }

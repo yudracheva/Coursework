@@ -6,7 +6,7 @@ namespace Project.Models.Documents
     /// <summary>
     /// Документ "Поступление материалов"
     /// </summary>
-    public class ReceiptOfMaterials : Document
+    public class ActOfReceipt : Document
     {
         /// <summary>
         /// Заказ поставщику
@@ -21,6 +21,6 @@ namespace Project.Models.Documents
         /// <summary>
         /// Список материалов
         /// </summary>
-        public List<LineOfMaterials> Materials { get; set; }
+        public List<LineOfMaterials> Materials { get; set; } = new List<LineOfMaterials>();
     }
 }

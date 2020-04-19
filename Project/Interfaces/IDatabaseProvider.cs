@@ -1,4 +1,5 @@
-﻿using Project.Models.ReferenceInformation;
+﻿using Project.Models.Documents;
+using Project.Models.ReferenceInformation;
 using System.Collections.Generic;
 
 namespace Project.Interfaces
@@ -107,5 +108,30 @@ namespace Project.Interfaces
         /// </summary>
         /// <param name="id">ИДентификатор категории материала</param>
         void RemoveMaterialCategory(int id);
+
+        /// <summary>
+        /// Сохранение акта
+        /// </summary>
+        /// <param name="document">Акт</param>
+        void SaveActOfReceipt(ActOfReceipt document);
+
+        /// <summary>
+        /// Сохранение акта
+        /// </summary>
+        /// <param name="document">Акт</param>
+        void RemoveActOfReceipt(int id);
+
+        /// <summary>
+        /// Возвращает акт
+        /// </summary>
+        /// <param name="id">Номер акта</param>
+        /// <returns>Документ</returns>
+        ActOfReceipt GetActOfReceipt(int id);
+
+        /// <summary>
+        /// Возвращает список актов
+        /// </summary>
+        /// <returns>Список документа</returns>
+        List<ActOfReceipt> GetActsOfReceipt();
     }
 }
