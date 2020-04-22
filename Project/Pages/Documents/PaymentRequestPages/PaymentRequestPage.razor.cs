@@ -19,10 +19,18 @@ namespace Project.Pages.Documents.PaymentRequestPages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        protected bool isLoad;
         protected PaymentRequest document;
+        protected bool isLoad;
         protected int selectedSupplier;
         protected List<Supplier> suppliers;
+        protected string selectedDate;
+
+        protected void ChangeDate(ChangeEventArgs changeEventArgs)
+        {
+            var date = DateTime.Parse(changeEventArgs.Value.ToString());
+            selectedDate = date.ToString("yyyy-MM-ddThh:mm");
+        }
+
         protected override void OnInitialized()
         {
             isLoad = false;
@@ -31,15 +39,19 @@ namespace Project.Pages.Documents.PaymentRequestPages
             {
                 document = DatabaseProvider.GetPaymentRequest(Id);
                 selectedSupplier = document.Supplier?.Id ?? 0;
+                selectedDate = document.CreatedDate.ToString("yyyy-MM-ddThh:mm");
             }
             else
             {
                 document = new PaymentRequest();
+                selectedDate = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
             }
 
             suppliers = DatabaseProvider.GetSuppliers();
 
             isLoad = true;
+
+            StateHasChanged();
         }
 
         protected void Save()
@@ -56,8 +68,10 @@ namespace Project.Pages.Documents.PaymentRequestPages
                     document.Supplier = null;
                 }
 
+                document.CreatedDate = DateTime.Parse(selectedDate);
+
                 DatabaseProvider.SavePaymentRequest(document);
-                NavigationManager.NavigateTo("/receipt-of-materials");
+                NavigationManager.NavigateTo("/payment-requests");
             }
             catch (Exception ex)
             {

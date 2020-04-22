@@ -1,73 +1,65 @@
 ﻿@page "/adjustment-of-the-balance-of-materials/{id:int}"
 @page "/adjustment-of-the-balance-of-materials/new"
 
-@if (document != null)
-{
-    <h3>Акт о приемку товара</h3>
+<h3>Корректировка остатков</h3>
 
-    <div class="row">
-        <div class="col-1">
-            <button class="btn btn-outline-secondary btn-sm" @onclick="Save">Сохранить</button>
-        </div>
+<div class="row">
+    <div class="col-1">
+        <button class="btn btn-outline-secondary btn-sm" @onclick="Save">Сохранить</button>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Номер: </label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control form-control-sm" value="@document.Number" disabled />
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Дата: </label>
-                <div class="col-sm-9">
-                    <input type="datetime-local" class="form-control form-control-sm" @bind="@document.CreatedDate" />
-                </div>
+<div class="row">
+    <div class="col">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Номер: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control form-control-sm" value="@document.Number" disabled />
             </div>
         </div>
     </div>
-
-    <div class="form-group row">
-        <label class="col-sm-3 col-form-label">Поставщик:</label>
-        <div class="col-sm-9">
-            <select class="form-control form-control-sm" @bind="selectedSupplier">
-                <option value=0>@("<Пусто>")</option>
-                @foreach (var supplier in suppliers)
-                {
-                    <option value=@supplier.Id>@supplier.OrganizationName</option>
-                }
-            </select>
+    <div class="col">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Дата: </label>
+            <div class="col-sm-9">
+                <input type="datetime-local" class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" @oninput="Dds" />
+            </div>
         </div>
     </div>
+</div>
 
-    <table class="table table-striped table-hover table-sm">
-        <thead>
+<div class="row pb-2">
+    <div class="col">
+        <button class="btn btn-sm btn-outline-secondary " @onclick="AddLine">Добавить строку</button>
+    </div>
+</div>
+
+<table class="table table-striped table-hover table-sm">
+    <thead>
+        <tr>
+            <th style="width:10%">№</th>
+            <th>Материал</th>
+            <th style="width:15%">Количестно</th>>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var material in document.Materials)
+        {
             <tr>
-                <th>№</th>
-                <th>Материал</th>
-                <th>Количестно</th>
-                <th>Цена</th>
-                <th>Сумма</th>
+                <th>@material.Number</th>
+                <th>
+                    <select class="form-control form-control-sm" @bind="@material.SelectedMaterial">
+                        <option value=0>@("<Пусто>")</option>
+                        @foreach (var materialForList in materials)
+                        {
+                            <option value=@materialForList.Id>@materialForList.Name</option>
+                        }
+                    </select>
+                </th>
+                <th>
+                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" />
+                </th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var material in document.Materials)
-            {
-                <tr>
-                    <th>@material.Number</th>
-                    <th>@material.Material?.Name</th>
-                    <th>@material.Count</th>
-                    <th>@material.Price</th>
-                    <th>@material.Sum</th>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-
-}
+        }
+    </tbody>
+</table>
