@@ -16,6 +16,6 @@ namespace Project.Models.Documents
         /// <summary>
         /// Список материалов
         /// </summary>
-        public List<LineOfMaterials> Materials { get; set; }
+        public List<LineOfMaterials> Materials { get; set; } = new List<LineOfMaterials>();
     }
 }

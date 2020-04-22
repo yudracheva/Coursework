@@ -35,6 +35,7 @@ namespace Project.Pages.ReferenceInformation.Matetials
                 material = DatabaseProvider.GetMaterial(Id);
                 oldName = material?.Name;
                 selectedMaterialCategory = material.Category?.Id ?? 0;
+                selectedSupplier = material.Supplier?.Id ?? 0;
             }
             else
             {
