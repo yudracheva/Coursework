@@ -21,6 +21,10 @@ namespace Project.Interfaces
         /// </summary>
         /// <returns>Список всех материалов</returns>
         List<Material> GetMaterials();
+        void RemoveCorrectionOfBalanceMaterials(int id);
+        void RemovePaymentRequest(int id);
+        void RemoveOrdersToSuppliers(int id);
+        List<OrdersToSuppliers> GetOrdersToSuppliers();
 
         /// <summary>
         /// Возвращает информацию по выбранному поставщику
@@ -28,6 +32,9 @@ namespace Project.Interfaces
         /// <param name="id">ИДентификатор поставщика</param>
         /// <returns>Поставщик</returns>
         Supplier GetSupplier(int id);
+
+        List<CorrectionOfBalanceMaterials> GetCorrectionsOfBalanceMaterials();
+        List<PaymentRequest> GetPaymentsRequests();
 
         /// <summary>
         /// Возвращает список поставщиков

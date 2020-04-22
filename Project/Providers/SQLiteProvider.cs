@@ -68,23 +68,19 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
                 {
-                    using (var dbReader = cmd.ExecuteReader())
+                    var bank = new Bank()
                     {
-                        while (dbReader.Read())
-                        {
-                            var bank = new Bank()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                Bik = dbReader.GetString("BIK"),
-                                CorrespondentAccount = dbReader.GetString("CORRESPONDENTACCOUNT"),
-                                Name = dbReader.GetString("NAME"),
-                            };
+                        Id = dbReader.GetInt("ID"),
+                        Bik = dbReader.GetString("BIK"),
+                        CorrespondentAccount = dbReader.GetString("CORRESPONDENTACCOUNT"),
+                        Name = dbReader.GetString("NAME"),
+                    };
 
-                            result.Add(bank);
-                        }
-                    }
+                    result.Add(bank);
                 }
             }
 
@@ -95,17 +91,13 @@ namespace Project.Providers
         {
             var sql = @"delete from BANK where ID = @Id";
 
-            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
-            {
-                con.Open();
+            using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
+            con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
-                {
-                    cmd.AddParameter("@Id", id);
+            using var cmd = new SQLiteCommand(sql, con);
+            cmd.AddParameter("@Id", id);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            cmd.ExecuteNonQuery();
         }
 
         public void SaveBank(Bank bank)
@@ -117,20 +109,16 @@ namespace Project.Providers
             var sql = @"insert or replace into BANK (ID, NAME, BIK, CORRESPONDENTACCOUNT)
                                   values (@Id, @Name, @Bik, @Account)";
 
-            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
-            {
-                con.Open();
+            using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
+            con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
-                {
-                    cmd.AddParameter("@Id", id);
-                    cmd.AddParameter("@Name", bank.Name);
-                    cmd.AddParameter("@Bik", bank.Bik);
-                    cmd.AddParameter("@Account", bank.CorrespondentAccount);
+            using var cmd = new SQLiteCommand(sql, con);
+            cmd.AddParameter("@Id", id);
+            cmd.AddParameter("@Name", bank.Name);
+            cmd.AddParameter("@Bik", bank.Bik);
+            cmd.AddParameter("@Account", bank.CorrespondentAccount);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            cmd.ExecuteNonQuery();
         }
 
         public Material GetMaterial(int id)
@@ -154,37 +142,33 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@Id", id);
+
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
                 {
-                    cmd.AddParameter("@Id", id);
-
-                    using (var dbReader = cmd.ExecuteReader())
+                    var material = new Material()
                     {
-                        while (dbReader.Read())
-                        {
-                            var material = new Material()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                Name = dbReader.GetString("NAME"),
-                                DeliveriesStopped = dbReader.GetInt("DELIVERIESSTOPPED") == 1,
-                                Description = dbReader.GetString("DESCRIPTION"),
-                            };
+                        Id = dbReader.GetInt("ID"),
+                        Name = dbReader.GetString("NAME"),
+                        DeliveriesStopped = dbReader.GetInt("DELIVERIESSTOPPED") == 1,
+                        Description = dbReader.GetString("DESCRIPTION"),
+                    };
 
-                            material.Supplier = new Supplier()
-                            {
-                                Id = dbReader.GetInt("SUPPLIER"),
-                                OrganizationName = dbReader.GetString("SUPPLIERNAME")
-                            };
+                    material.Supplier = new Supplier()
+                    {
+                        Id = dbReader.GetInt("SUPPLIER"),
+                        OrganizationName = dbReader.GetString("SUPPLIERNAME")
+                    };
 
-                            material.Category = new MaterialCategory()
-                            {
-                                Id = dbReader.GetInt("Category"),
-                                Name = dbReader.GetString("CATEGORYNAME")
-                            };
+                    material.Category = new MaterialCategory()
+                    {
+                        Id = dbReader.GetInt("Category"),
+                        Name = dbReader.GetString("CATEGORYNAME")
+                    };
 
-                            return material;
-                        }
-                    }
+                    return material;
                 }
             }
 
@@ -213,35 +197,31 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
                 {
-                    using (var dbReader = cmd.ExecuteReader())
+                    var material = new Material()
                     {
-                        while (dbReader.Read())
-                        {
-                            var material = new Material()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                Name = dbReader.GetString("NAME"),
-                                DeliveriesStopped = dbReader.GetInt("DELIVERIESSTOPPED") == 1,
-                                Description = dbReader.GetString("DESCRIPTION"),
-                            };
+                        Id = dbReader.GetInt("ID"),
+                        Name = dbReader.GetString("NAME"),
+                        DeliveriesStopped = dbReader.GetInt("DELIVERIESSTOPPED") == 1,
+                        Description = dbReader.GetString("DESCRIPTION"),
+                    };
 
-                            material.Supplier = new Supplier()
-                            {
-                                Id = dbReader.GetInt("SUPPLIER"),
-                                OrganizationName = dbReader.GetString("SUPPLIERNAME")
-                            };
+                    material.Supplier = new Supplier()
+                    {
+                        Id = dbReader.GetInt("SUPPLIER"),
+                        OrganizationName = dbReader.GetString("SUPPLIERNAME")
+                    };
 
-                            material.Category = new MaterialCategory()
-                            {
-                                Id = dbReader.GetInt("Category"),
-                                Name = dbReader.GetString("CATEGORYNAME")
-                            };
+                    material.Category = new MaterialCategory()
+                    {
+                        Id = dbReader.GetInt("Category"),
+                        Name = dbReader.GetString("CATEGORYNAME")
+                    };
 
-                            result.Add(material);
-                        }
-                    }
+                    result.Add(material);
                 }
             }
 
@@ -260,21 +240,17 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
                 {
-                    using (var dbReader = cmd.ExecuteReader())
+                    var material = new MaterialCategory()
                     {
-                        while (dbReader.Read())
-                        {
-                            var material = new MaterialCategory()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                Name = dbReader.GetString("NAME"),
-                            };
+                        Id = dbReader.GetInt("ID"),
+                        Name = dbReader.GetString("NAME"),
+                    };
 
-                            result.Add(material);
-                        }
-                    }
+                    result.Add(material);
                 }
             }
 
@@ -292,23 +268,19 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@Id", id);
+
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
                 {
-                    cmd.AddParameter("@Id", id);
-
-                    using (var dbReader = cmd.ExecuteReader())
+                    var material = new MaterialCategory()
                     {
-                        while (dbReader.Read())
-                        {
-                            var material = new MaterialCategory()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                Name = dbReader.GetString("NAME"),
-                            };
+                        Id = dbReader.GetInt("ID"),
+                        Name = dbReader.GetString("NAME"),
+                    };
 
-                            return material;
-                        }
-                    }
+                    return material;
                 }
             }
 
@@ -387,30 +359,28 @@ namespace Project.Providers
             {
                 con.Open();
 
-                using (var cmd = new SQLiteCommand(sql, con))
+                using var cmd = new SQLiteCommand(sql, con);
+                using (var dbReader = cmd.ExecuteReader())
                 {
-                    using (var dbReader = cmd.ExecuteReader())
+                    while (dbReader.Read())
                     {
-                        while (dbReader.Read())
+                        var supplier = new Supplier()
                         {
-                            var supplier = new Supplier()
-                            {
-                                Id = dbReader.GetInt("ID"),
-                                OrganizationName = dbReader.GetString("NAME"),
-                                Email = dbReader.GetString("Email"),
-                                INN = dbReader.GetString("INN"),
-                                KPP = dbReader.GetString("KPP"),
-                                BankAccount = dbReader.GetString("PAYMENTACCOUNT"),
-                            };
+                            Id = dbReader.GetInt("ID"),
+                            OrganizationName = dbReader.GetString("NAME"),
+                            Email = dbReader.GetString("Email"),
+                            INN = dbReader.GetString("INN"),
+                            KPP = dbReader.GetString("KPP"),
+                            BankAccount = dbReader.GetString("PAYMENTACCOUNT"),
+                        };
 
-                            supplier.Bank = new Bank()
-                            {
-                                Id = dbReader.GetInt("BANK"),
-                                Name = dbReader.GetString("BANKNAME"),
-                            };
+                        supplier.Bank = new Bank()
+                        {
+                            Id = dbReader.GetInt("BANK"),
+                            Name = dbReader.GetString("BANKNAME"),
+                        };
 
-                            result.Add(supplier);
-                        }
+                        result.Add(supplier);
                     }
                 }
             }
@@ -719,6 +689,36 @@ namespace Project.Providers
         }
 
         public List<ActOfReceipt> GetActsOfReceipt()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveCorrectionOfBalanceMaterials(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePaymentRequest(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveOrdersToSuppliers(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<OrdersToSuppliers> GetOrdersToSuppliers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CorrectionOfBalanceMaterials> GetCorrectionsOfBalanceMaterials()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<PaymentRequest> GetPaymentsRequests()
         {
             throw new NotImplementedException();
         }

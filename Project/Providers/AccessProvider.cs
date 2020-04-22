@@ -187,5 +187,35 @@ namespace Project.Providers
         {
             throw new System.NotImplementedException();
         }
+
+        public void RemoveCorrectionOfBalanceMaterials(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemovePaymentRequest(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveOrdersToSuppliers(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<OrdersToSuppliers> GetOrdersToSuppliers()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<CorrectionOfBalanceMaterials> GetCorrectionsOfBalanceMaterials()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<PaymentRequest> GetPaymentsRequests()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

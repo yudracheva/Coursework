@@ -5,7 +5,7 @@ namespace Project.Models.Documents
     /// <summary>
     /// Документ "Корректировка остатков"
     /// </summary>
-    public class AdjustmentOfTheBalanceOfMaterials : Document
+    public class CorrectionOfBalanceMaterials : Document
     {
         /// <summary>
         /// Список материалов

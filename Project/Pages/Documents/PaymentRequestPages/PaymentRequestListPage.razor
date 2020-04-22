@@ -1,13 +1,13 @@
-﻿@page "/receipt-of-materials"
+﻿@page "/payment-requests"
 
-<h3>Акты о приемке материалов</h3>
+<h3>Платежные требования</h3>
 
 @if (isLoad)
 {
     <div class="row mb-2">
         <div class="col">
             @{
-                var adressToCreate = "/receipt-of-materials/new";
+                var adressToCreate = "/payment-requests/new";
             }
             <button class="btn btn-sm btn-outline-info" @onclick="(()=>NavigationManager.NavigateTo(adressToCreate))">Создать</button>
         </div>
@@ -38,7 +38,7 @@
                 {
                     <tr>
                         <td>
-                            <a href="/adjustment-of-the-balance-of-materials/@document.Number.ToString("0")">@document.Number</a>
+                            <a href="/payment-requests/@document.Number.ToString("0")">@document.Number</a>
                         </td>
                         <td>
                             @document.CreatedDate.ToLongDateString()
