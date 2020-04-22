@@ -534,8 +534,9 @@ namespace Project.Providers
                 id = GetGenNumber_ActOfReceipt();
 
             using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
+            
             // Очистим все строки, а потом добавим
-            var sql = @"delete from RECEIPT_OF_MATERIALS where ID = @Id";
+            var sql = @"delete from RECEIPT_OF_MATERIALS_LINES where DOCUMENT_NUMBER = @Id";
 
             con.Open();
 
@@ -546,32 +547,141 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into SUPPLIERS (DocumentNumber, DocumentDate, Number, Supplier, Material, Count, Sum)
-                                                  values (@DocumentNumber, @DocumentDate, @Number, @Supplier, @Material, @Count, @Sum)";
+            sql = @"insert or replace into RECEIPT_OF_MATERIALS (Number, Date, Supplier)
+                                                         values (@DocumentNumber, @DocumentDate, @Supplier)";
+
+            using (var cmd = new SQLiteCommand(sql, con))
+            {
+                cmd.AddParameter("@DocumentNumber", id);
+                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToLongDateString());
+                cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"insert or replace into RECEIPT_OF_MATERIALS_LINES (DOCUMENT_NUMBER, NUMBER, MATERIAL, COUNT, PRICE, SUM)
+                                                              values (@DocumentNumber, @Number,  @Material, @Count, @Price, @Sum)";
 
             foreach (var item in document.Materials)
             {
-                using var cmd = new SQLiteCommand(sql, con);
-                cmd.AddParameter("@DocumentNumber", id);
-                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToLongDateString());
-                cmd.AddParameter("@Number", item.Number);
-                cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
-                cmd.AddParameter("@Material", item.Material?.Id ?? 0);
-                cmd.AddParameter("@Count", item.Count);
-                cmd.AddParameter("@Sum", item.Sum);
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@DocumentNumber", id);
+                    cmd.AddParameter("@Number", item.Number);
+                    cmd.AddParameter("@Material", item?.Material?.Id ?? 0);
+                    cmd.AddParameter("@Count", item.Count);
+                    cmd.AddParameter("@Price", item.Price);
+                    cmd.AddParameter("@Sum", item.Sum);
 
-                cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
         public void RemoveActOfReceipt(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"delete from RECEIPT_OF_MATERIALS_LINES where DOCUMENT_NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            sql = @"delete from RECEIPT_OF_MATERIALS where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public ActOfReceipt GetActOfReceipt(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"select NUMBER,
+                               DATE,
+                               SUPPLIER 
+                          from RECEIPT_OF_MATERIALS";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                if (dbReader.Read())
+                {
+                    var actOfReceipt = new ActOfReceipt()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        CreatedDate = dbReader.GetDateTime("DATE")
+                    };
+
+                    var supplier = dbReader.GetInt("SUPPLIER");
+                    if (supplier != 0)
+                        actOfReceipt.Supplier = GetSupplier(supplier);
+
+                    actOfReceipt.Materials = GetActOfReceiptMaterials(id);
+
+                    return actOfReceipt;
+                }
+            }
+
+            return null;
+        }
+
+        private List<LineOfMaterials> GetActOfReceiptMaterials(int id)
+        {
+            var lines = new List<LineOfMaterials>();
+
+            var sql = @"select NUMBER,
+                               PRICE,
+                               COUNT,
+                               SUM,
+                               MATERIAL
+                          from RECEIPT_OF_MATERIALS_LINES
+                         where DOCUMENT_NUMBER = @DocumentNumber";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@DocumentNumber", id);
+
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var line = new LineOfMaterials()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        Price = dbReader.GetDecimal("PRICE"),
+                        Sum = dbReader.GetDecimal("SUM"),
+                        Count = dbReader.GetInt("COUNT"),
+                        SelectedMaterial = dbReader.GetInt("MATERIAL")
+                    };
+
+                    if (line.SelectedMaterial != 0)
+                        line.Material = GetMaterial(line.SelectedMaterial);
+
+                    lines.Add(line);
+                }
+            }
+
+            return lines;
         }
 
         public List<ActOfReceipt> GetActsOfReceipt()
@@ -591,7 +701,7 @@ namespace Project.Providers
                 using var dbReader = cmd.ExecuteReader();
                 while (dbReader.Read())
                 {
-                    var ordersToSuppliers = new OrdersToSuppliers()
+                    var actOfReceipt = new ActOfReceipt()
                     {
                         Number = dbReader.GetInt("NUMBER"),
                         CreatedDate = dbReader.GetDateTime("DATE")
@@ -599,7 +709,9 @@ namespace Project.Providers
 
                     var supplier = dbReader.GetInt("SUPPLIER");
                     if (supplier != 0)
-                        ordersToSuppliers.Supplier = GetSupplier(supplier);
+                        actOfReceipt.Supplier = GetSupplier(supplier);
+
+                    result.Add(actOfReceipt);
                 }
             }
 
@@ -816,7 +928,7 @@ namespace Project.Providers
 
         private int GetGenNumber_ActOfReceipt()
         {
-            var sql = @"select max(ID) as ID from RECEIPT_OF_MATERIALS";
+            var sql = @"select max(NUMBER) as ID from RECEIPT_OF_MATERIALS";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
@@ -836,6 +948,41 @@ namespace Project.Providers
             }
 
             return 1;
+        }
+
+        public PaymentRequest GetPaymentRequest(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OrdersToSuppliers GetOrderToSupplier(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OrdersToSuppliers GetOrdersToSuppliers(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(object id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveCorrectionOfBalanceMaterials(CorrectionOfBalanceMaterials document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SavePaymentRequest(PaymentRequest document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveOrderToSupplier(OrdersToSuppliers document)
+        {
+            throw new NotImplementedException();
         }
     }
 }

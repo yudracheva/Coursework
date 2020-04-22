@@ -38,10 +38,10 @@
                 {
                     <tr>
                         <td>
-                            <a href="/adjustment-of-the-balance-of-materials/@document.Number.ToString("0")">@document.Number</a>
+                            <a href="/receipt-of-materials/@document.Number.ToString("0")">@document.Number</a>
                         </td>
                         <td>
-                            @document.CreatedDate.ToLongDateString()
+                            @document.CreatedDate.ToString("dd.MM.yyyy hh:mm")
                         </td>
                         <td>
                             @if (!String.IsNullOrEmpty(document?.Supplier?.OrganizationName))

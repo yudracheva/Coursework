@@ -24,6 +24,10 @@ namespace Project.Interfaces
         void RemoveCorrectionOfBalanceMaterials(int id);
         void RemovePaymentRequest(int id);
         void RemoveOrdersToSuppliers(int id);
+        PaymentRequest GetPaymentRequest(int id);
+        OrdersToSuppliers GetOrderToSupplier(int id);
+        OrdersToSuppliers GetOrdersToSuppliers(int id);
+        CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(object id);
         List<OrdersToSuppliers> GetOrdersToSuppliers();
 
         /// <summary>
@@ -34,13 +38,16 @@ namespace Project.Interfaces
         Supplier GetSupplier(int id);
 
         List<CorrectionOfBalanceMaterials> GetCorrectionsOfBalanceMaterials();
+        void SaveCorrectionOfBalanceMaterials(CorrectionOfBalanceMaterials document);
         List<PaymentRequest> GetPaymentsRequests();
+        void SavePaymentRequest(PaymentRequest document);
 
         /// <summary>
         /// Возвращает список поставщиков
         /// </summary>
         /// <returns>Список поставщиков</returns>
         List<Supplier> GetSuppliers();
+        void SaveOrderToSupplier(OrdersToSuppliers document);
 
         /// <summary>
         /// Возвращает категорию материалов

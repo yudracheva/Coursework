@@ -18,6 +18,11 @@ namespace Project.Models.Documents
         public Material Material { get; set; }
 
         /// <summary>
+        /// Выбранный материал
+        /// </summary>
+        public int SelectedMaterial { get; set; }
+
+        /// <summary>
         /// Количество
         /// </summary>
         public int Count { get; set; }

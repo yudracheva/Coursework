@@ -5,10 +5,11 @@ using Project.Models.ReferenceInformation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 
 namespace Project.Pages.Documents.ReceiptOfMaterials
 {
-    public class ReceiptOfMaterialsPageIndex : ComponentBase
+    public partial class ReceiptOfMaterialsPageIndex : ComponentBase
     {
         [Parameter]
         public int Id { get; set; }
@@ -23,6 +24,55 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         protected bool isLoad;
         protected int selectedSupplier;
         protected List<Supplier> suppliers;
+        protected List<Material> materials;
+        protected string selectedDate;
+
+        protected void ChangeDate(ChangeEventArgs changeEventArgs)
+        {
+            var date = DateTime.Parse(changeEventArgs.Value.ToString());
+            selectedDate = date.ToString("yyyy-MM-ddThh:mm");
+        }
+
+        protected void Dds()
+        {
+
+        }
+
+        protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
+        {
+            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
+            line.Count = Convert.ToInt32(agrs.Value);
+            line.Sum = line.Price * line.Count;
+        }
+
+        protected void ChangePrice(ChangeEventArgs agrs, int numberLine)
+        {
+            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
+            line.Price = Convert.ToInt32(agrs.Value);
+            line.Sum = line.Price * line.Count;
+        }
+
+        protected void ChangeSum(ChangeEventArgs agrs, int numberLine)
+        {
+            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
+            line.Sum = Convert.ToInt32(agrs.Value);
+            if (line.Count != 0)
+                line.Price = line.Sum / line.Count;
+        }
+
+        protected void AddLine()
+        {
+            document.Materials.Add(new LineOfMaterials());
+            ChangesNumbers();
+        }
+
+        private void ChangesNumbers()
+        {
+            for (int i = 0; i < document.Materials.Count; i++)
+            {
+                document.Materials[i].Number = i + 1;
+            }
+        }
 
         protected override void OnInitialized()
         {
@@ -32,15 +82,20 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
             {
                 document = DatabaseProvider.GetActOfReceipt(Id);
                 selectedSupplier = document.Supplier?.Id ?? 0;
+                selectedDate = document.CreatedDate.ToString("yyyy-MM-ddThh:mm");
             }
             else
             {
                 document = new ActOfReceipt();
+                selectedDate = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
             }
 
             suppliers = DatabaseProvider.GetSuppliers();
+            materials = DatabaseProvider.GetMaterials();
 
             isLoad = true;
+
+            StateHasChanged();
         }
 
         protected void Save()
@@ -55,6 +110,13 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
                 else
                 {
                     document.Supplier = null;
+                }
+
+                document.CreatedDate = DateTime.Parse(selectedDate);
+
+                foreach (var item in document.Materials)
+                {
+                    item.Material = materials.FirstOrDefault(d => d.Id == item.SelectedMaterial);
                 }
 
                 DatabaseProvider.SaveActOfReceipt(document);

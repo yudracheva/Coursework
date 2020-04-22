@@ -217,5 +217,40 @@ namespace Project.Providers
         {
             throw new System.NotImplementedException();
         }
+
+        public PaymentRequest GetPaymentRequest(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public OrdersToSuppliers GetOrderToSupplier(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public OrdersToSuppliers GetOrdersToSuppliers(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(object id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveCorrectionOfBalanceMaterials(CorrectionOfBalanceMaterials document)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SavePaymentRequest(PaymentRequest document)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveOrderToSupplier(OrdersToSuppliers document)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

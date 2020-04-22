@@ -36,7 +36,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
         private void UpdateData()
         {
             isLoad = false;
-            
+
             banks = DatabaseProvider.GetBanks();
 
             isLoad = true;
