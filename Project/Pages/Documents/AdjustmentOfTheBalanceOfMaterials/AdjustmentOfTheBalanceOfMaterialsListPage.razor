@@ -1,4 +1,5 @@
 ﻿@page "/adjustment-of-the-balance-of-materials"
+@inherits DefaultComponentBase
 
 <h3>Корректировки остатков</h3>
 
@@ -38,7 +39,7 @@
                             <a href="/adjustment-of-the-balance-of-materials/@document.Number.ToString("0")">@document.Number</a>
                         </td>
                         <td>
-                            @document.CreatedDate.ToLongDateString()
+                            @document.CreatedDate.ToString()
                         </td>
                         <td>
                             <div class="row float-right">

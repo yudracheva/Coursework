@@ -1,5 +1,6 @@
 ﻿@page "/orders-to-suppliers/{id:int}"
 @page "/orders-to-suppliers/new"
+@inherits DefaultComponentBase
 
 <h3>Заказ поставщику</h3>
 
@@ -22,7 +23,7 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Дата: </label>
             <div class="col-sm-9">
-                <input type="datetime-local" class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" @oninput="Dds" />
+                <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
             </div>
         </div>
     </div>
@@ -72,13 +73,13 @@
                     </select>
                 </th>
                 <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" />
+                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" min="0" />
                 </th>
                 <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangePrice(agrs, material.Number))" value="@material.Price" />
+                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangePrice(agrs, material.Number))" value="@material.Price" min="0" />
                 </th>
                 <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" value="@material.Sum" />
+                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" value="@material.Sum" min="0" />
                 </th>
             </tr>
         }

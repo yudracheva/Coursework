@@ -28,7 +28,7 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
             var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString("yyyy-MM-ddThh:mm");
+            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
         }
 
         protected void Dds()
@@ -39,7 +39,8 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            line.Count = Convert.ToInt32(agrs.Value);
+            var count = Convert.ToInt32(agrs.Value);
+            line.Count = count < 0 ? 0 : count;
         }
 
         protected void AddLine()
@@ -63,12 +64,12 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
             if (Id != 0)
             {
                 document = DatabaseProvider.GetCorrectionOfBalanceMaterials(Id);
-                selectedDate = document.CreatedDate.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
             else
             {
                 document = new CorrectionOfBalanceMaterials();
-                selectedDate = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
 
             materials = DatabaseProvider.GetMaterials();

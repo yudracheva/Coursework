@@ -28,7 +28,7 @@ namespace Project.Pages.Documents.PaymentRequestPages
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
             var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString("yyyy-MM-ddThh:mm");
+            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
         }
 
         protected override void OnInitialized()
@@ -39,12 +39,12 @@ namespace Project.Pages.Documents.PaymentRequestPages
             {
                 document = DatabaseProvider.GetPaymentRequest(Id);
                 selectedSupplier = document.Supplier?.Id ?? 0;
-                selectedDate = document.CreatedDate.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
             else
             {
                 document = new PaymentRequest();
-                selectedDate = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
 
             suppliers = DatabaseProvider.GetSuppliers();

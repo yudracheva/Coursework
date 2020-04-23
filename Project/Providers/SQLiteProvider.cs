@@ -11,6 +11,7 @@ namespace Project.Providers
     public class SQLiteProvider : IDatabaseProvider
     {
         private readonly SettingsProvider _settingsProvider;
+        private const string DATE_STRING = "dd-MM-yyyy HH:mm:ss";
 
         public SQLiteProvider(SettingsProvider settingsProvider)
         {
@@ -534,7 +535,7 @@ namespace Project.Providers
                 id = GetGenNumber_ActOfReceipt();
 
             using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
-            
+
             // Очистим все строки, а потом добавим
             var sql = @"delete from RECEIPT_OF_MATERIALS_LINES where DOCUMENT_NUMBER = @Id";
 
@@ -553,7 +554,7 @@ namespace Project.Providers
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
-                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToLongDateString());
+                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
                 cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
 
                 cmd.ExecuteNonQuery();
@@ -720,17 +721,81 @@ namespace Project.Providers
 
         public void RemoveCorrectionOfBalanceMaterials(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"delete from CORRECTION_OF_BALANCES_LINES where DOCUMENT_NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            sql = @"delete from CORRECTION_OF_BALANCES where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public void RemovePaymentRequest(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"delete from PAYMENT_REQUEST where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public void RemoveOrdersToSuppliers(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"delete from ORDERS_TO_SUPPLIERS_LINES where DOCUMENT_NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            sql = @"delete from ORDERS_TO_SUPPLIERS where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public List<OrdersToSuppliers> GetOrdersToSuppliers()
@@ -802,7 +867,8 @@ namespace Project.Providers
 
             var sql = @"select NUMBER,
                                DATE,
-                               SUPPLIER 
+                               SUPPLIER,
+                               SUM
                           from PAYMENT_REQUEST";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
@@ -816,7 +882,8 @@ namespace Project.Providers
                     var material = new PaymentRequest()
                     {
                         CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
-                        Number = dbReader.GetInt("NUMBER")
+                        Number = dbReader.GetInt("NUMBER"),
+                        Sum = dbReader.GetDecimal("SUM")
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -952,37 +1019,350 @@ namespace Project.Providers
 
         public PaymentRequest GetPaymentRequest(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"select NUMBER,
+                               DATE,
+                               SUPPLIER,
+                               SUM
+                          from PAYMENT_REQUEST
+                         where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@Id", id);
+                using var dbReader = cmd.ExecuteReader();
+                if (dbReader.Read())
+                {
+                    var paymentRequest = new PaymentRequest()
+                    {
+                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        Number = dbReader.GetInt("NUMBER"),
+                        Sum = dbReader.GetDecimal("SUM")
+                    };
+
+                    var supplier = dbReader.GetInt("SUPPLIER");
+                    if (supplier != 0)
+                        paymentRequest.Supplier = GetSupplier(supplier);
+
+                    return paymentRequest;
+                }
+            }
+
+            return null;
         }
 
         public OrdersToSuppliers GetOrderToSupplier(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"select NUMBER,
+                               DATE,
+                               SUPPLIER 
+                          from ORDERS_TO_SUPPLIERS";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                if (dbReader.Read())
+                {
+                    var actOfReceipt = new OrdersToSuppliers()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        CreatedDate = dbReader.GetDateTime("DATE")
+                    };
+
+                    var supplier = dbReader.GetInt("SUPPLIER");
+                    if (supplier != 0)
+                        actOfReceipt.Supplier = GetSupplier(supplier);
+
+                    actOfReceipt.Materials = GetOrderToSupplierMaterials(id);
+
+                    return actOfReceipt;
+                }
+            }
+
+            return null;
         }
 
-        public OrdersToSuppliers GetOrdersToSuppliers(int id)
+        private List<LineOfMaterials> GetOrderToSupplierMaterials(int id)
         {
-            throw new NotImplementedException();
+            var lines = new List<LineOfMaterials>();
+
+            var sql = @"select NUMBER,
+                               PRICE,
+                               COUNT,
+                               SUM,
+                               MATERIAL
+                          from ORDERS_TO_SUPPLIERS_LINES
+                         where DOCUMENT_NUMBER = @DocumentNumber";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@DocumentNumber", id);
+
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var line = new LineOfMaterials()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        Price = dbReader.GetDecimal("PRICE"),
+                        Sum = dbReader.GetDecimal("SUM"),
+                        Count = dbReader.GetInt("COUNT"),
+                        SelectedMaterial = dbReader.GetInt("MATERIAL")
+                    };
+
+                    if (line.SelectedMaterial != 0)
+                        line.Material = GetMaterial(line.SelectedMaterial);
+
+                    lines.Add(line);
+                }
+            }
+
+            return lines;
         }
 
-        public CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(object id)
+        public CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"select NUMBER,
+                               DATE
+                          from CORRECTION_OF_BALANCES
+                         where NUMBER = @Id";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@Id", id);
+                using var dbReader = cmd.ExecuteReader();
+                if (dbReader.Read())
+                {
+                    var correctionOfBalanceMaterials = new CorrectionOfBalanceMaterials()
+                    {
+                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        Number = dbReader.GetInt("NUMBER")
+                    };
+
+                    correctionOfBalanceMaterials.Materials = GetCorrectionOfBalanceMaterialsMaterials(id);
+
+                    return correctionOfBalanceMaterials;
+                }
+            }
+
+            return null;
+        }
+
+        private List<LineOfMaterials> GetCorrectionOfBalanceMaterialsMaterials(int id)
+        {
+            var lines = new List<LineOfMaterials>();
+
+            var sql = @"select NUMBER,
+                               COUNT,
+                               MATERIAL
+                          from CORRECTION_OF_BALANCES_LINES
+                         where DOCUMENT_NUMBER = @DocumentNumber";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@DocumentNumber", id);
+
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var line = new LineOfMaterials()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        Count = dbReader.GetInt("COUNT"),
+                        SelectedMaterial = dbReader.GetInt("MATERIAL")
+                    };
+
+                    if (line.SelectedMaterial != 0)
+                        line.Material = GetMaterial(line.SelectedMaterial);
+
+                    lines.Add(line);
+                }
+            }
+
+            return lines;
         }
 
         public void SaveCorrectionOfBalanceMaterials(CorrectionOfBalanceMaterials document)
         {
-            throw new NotImplementedException();
+            var id = document.Number;
+            if (id == 0)
+                id = GetGenNumber_CorrectionOfBalanceMaterials();
+
+            using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
+
+            // Очистим все строки, а потом добавим
+            var sql = @"delete from CORRECTION_OF_BALANCES_LINES where DOCUMENT_NUMBER = @Id";
+
+            con.Open();
+
+            using (var cmd = new SQLiteCommand(sql, con))
+            {
+                cmd.AddParameter("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"insert or replace into CORRECTION_OF_BALANCES (Number, Date)
+                                                         values (@DocumentNumber, @DocumentDate)";
+
+            using (var cmd = new SQLiteCommand(sql, con))
+            {
+                cmd.AddParameter("@DocumentNumber", id);
+                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"insert or replace into CORRECTION_OF_BALANCES_LINES (DOCUMENT_NUMBER, NUMBER, MATERIAL, COUNT)
+                                                              values (@DocumentNumber, @Number,  @Material, @Count)";
+
+            foreach (var item in document.Materials)
+            {
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@DocumentNumber", id);
+                    cmd.AddParameter("@Number", item.Number);
+                    cmd.AddParameter("@Material", item?.Material?.Id ?? 0);
+                    cmd.AddParameter("@Count", item.Count);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private int GetGenNumber_CorrectionOfBalanceMaterials()
+        {
+            var sql = @"select max(Number) as ID from CORRECTION_OF_BALANCES";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    using (var dbReader = cmd.ExecuteReader())
+                    {
+                        if (dbReader.Read())
+                        {
+                            var result = dbReader.GetInt("ID");
+                            return result + 1;
+                        }
+                    }
+                }
+            }
+
+            return 1;
         }
 
         public void SavePaymentRequest(PaymentRequest document)
         {
-            throw new NotImplementedException();
+            var id = document.Number;
+            if (id == 0)
+                id = GetGenNumber_PaymentRequest();
+
+            var sql = @"insert or replace into PAYMENT_REQUEST (NUMBER, DATE, SUM, SUPPLIER)
+                                  values (@Id, @DATE, @SUM, @Supplier)";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@Id", id);
+                    cmd.AddParameter("@DATE", document.CreatedDate.ToString(DATE_STRING));
+                    cmd.AddParameter("@SUM", document.Sum);
+                    cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private int GetGenNumber_PaymentRequest()
+        {
+            var sql = @"select max(Number) as ID from PAYMENT_REQUEST";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    using (var dbReader = cmd.ExecuteReader())
+                    {
+                        if (dbReader.Read())
+                        {
+                            var result = dbReader.GetInt("ID");
+                            return result + 1;
+                        }
+                    }
+                }
+            }
+
+            return 1;
         }
 
         public void SaveOrderToSupplier(OrdersToSuppliers document)
         {
-            throw new NotImplementedException();
+            var id = document.Number;
+            if (id == 0)
+                id = GetGenNumber_CorrectionOfBalanceMaterials();
+
+            using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
+
+            // Очистим все строки, а потом добавим
+            var sql = @"delete from CORRECTION_OF_BALANCES_LINES where DOCUMENT_NUMBER = @Id";
+
+            con.Open();
+
+            using (var cmd = new SQLiteCommand(sql, con))
+            {
+                cmd.AddParameter("@Id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"insert or replace into CORRECTION_OF_BALANCES (Number, Date)
+                                                         values (@DocumentNumber, @DocumentDate)";
+
+            using (var cmd = new SQLiteCommand(sql, con))
+            {
+                cmd.AddParameter("@DocumentNumber", id);
+                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+
+                cmd.ExecuteNonQuery();
+            }
+
+            sql = @"insert or replace into CORRECTION_OF_BALANCES_LINES (DOCUMENT_NUMBER, NUMBER, MATERIAL, COUNT)
+                                                              values (@DocumentNumber, @Number,  @Material, @Count)";
+
+            foreach (var item in document.Materials)
+            {
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    cmd.AddParameter("@DocumentNumber", id);
+                    cmd.AddParameter("@Number", item.Number);
+                    cmd.AddParameter("@Material", item?.Material?.Id ?? 0);
+                    cmd.AddParameter("@Count", item.Count);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

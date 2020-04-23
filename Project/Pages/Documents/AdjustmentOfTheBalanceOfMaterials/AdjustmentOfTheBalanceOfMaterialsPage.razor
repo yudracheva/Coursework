@@ -1,5 +1,6 @@
 ﻿@page "/adjustment-of-the-balance-of-materials/{id:int}"
 @page "/adjustment-of-the-balance-of-materials/new"
+@inherits DefaultComponentBase
 
 <h3>Корректировка остатков</h3>
 
@@ -22,7 +23,7 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Дата: </label>
             <div class="col-sm-9">
-                <input type="datetime-local" class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" @oninput="Dds" />
+                <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
             </div>
         </div>
     </div>
@@ -39,7 +40,7 @@
         <tr>
             <th style="width:10%">№</th>
             <th>Материал</th>
-            <th style="width:15%">Количестно</th>>
+            <th style="width:15%">Количестно</th>
         </tr>
     </thead>
     <tbody>
@@ -57,7 +58,7 @@
                     </select>
                 </th>
                 <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" />
+                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" min="0" />
                 </th>
             </tr>
         }

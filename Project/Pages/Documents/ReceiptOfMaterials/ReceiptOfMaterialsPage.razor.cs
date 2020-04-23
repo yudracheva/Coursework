@@ -9,7 +9,7 @@ using System.Web;
 
 namespace Project.Pages.Documents.ReceiptOfMaterials
 {
-    public partial class ReceiptOfMaterialsPageIndex : ComponentBase
+    public partial class ReceiptOfMaterialsPage
     {
         [Parameter]
         public int Id { get; set; }
@@ -30,7 +30,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
             var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString("yyyy-MM-ddThh:mm");
+            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
         }
 
         protected void Dds()
@@ -41,21 +41,24 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            line.Count = Convert.ToInt32(agrs.Value);
+            var count = Convert.ToInt32(agrs.Value);
+            line.Count = count < 0 ? 0 : count;
             line.Sum = line.Price * line.Count;
         }
 
         protected void ChangePrice(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            line.Price = Convert.ToInt32(agrs.Value);
+            var price = Convert.ToInt32(agrs.Value);
+            line.Price = price < 0 ? 0 : price;
             line.Sum = line.Price * line.Count;
         }
 
         protected void ChangeSum(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            line.Sum = Convert.ToInt32(agrs.Value);
+            var sum = Convert.ToInt32(agrs.Value);
+            line.Sum = sum < 0 ? 0 : sum;
             if (line.Count != 0)
                 line.Price = line.Sum / line.Count;
         }
@@ -82,12 +85,12 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
             {
                 document = DatabaseProvider.GetActOfReceipt(Id);
                 selectedSupplier = document.Supplier?.Id ?? 0;
-                selectedDate = document.CreatedDate.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
             else
             {
                 document = new ActOfReceipt();
-                selectedDate = DateTime.Now.ToString("yyyy-MM-ddThh:mm");
+                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
             }
 
             suppliers = DatabaseProvider.GetSuppliers();

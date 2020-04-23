@@ -1,5 +1,6 @@
 ﻿@page "/payment-requests/{id:int}"
 @page "/payment-requests/new"
+@inherits DefaultComponentBase
 
 <h3>Платежное требование</h3>
 
@@ -22,7 +23,7 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Дата: </label>
             <div class="col-sm-9">
-                <input type="datetime-local" class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
+                <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
             </div>
         </div>
     </div>
@@ -46,7 +47,7 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label">Сумма: </label>
             <div class="col-sm-9">
-                <input type="number" class="form-control form-control-sm" value="@document.Sum" />
+                <input type="number" class="form-control form-control-sm" value="@document.Sum" min="0" />
             </div>
         </div>
     </div>
