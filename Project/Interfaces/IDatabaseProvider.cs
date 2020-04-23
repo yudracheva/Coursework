@@ -1,5 +1,6 @@
 ﻿using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Models.Reports;
 using System.Collections.Generic;
 
 namespace Project.Interfaces
@@ -23,7 +24,7 @@ namespace Project.Interfaces
         List<Material> GetMaterials();
         
         void RemoveCorrectionOfBalanceMaterials(int id);
-        
+        List<ReportReceiptMaterialsBySupplier> GetReportReceiptMaterialsBySupplier();
         void RemovePaymentRequest(int id);
         
         void RemoveOrdersToSuppliers(int id);

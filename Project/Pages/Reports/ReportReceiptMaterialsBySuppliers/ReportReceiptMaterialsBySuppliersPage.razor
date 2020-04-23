@@ -1,5 +1,80 @@
-﻿<h3>ReportReceiptMaterialsBySuppliersPage</h3>
+﻿@page "/report-receipt-materials-by-suppliers"
+@inherits ReportsComponent
+<h3>Отчет о поступлении материалов по поставщикам</h3>
 
-@code {
+@if (isLoad)
+{
+    <div class="row pb-1" >
+        <div class="col pl-0">
+            <lable>Поставщик:</lable>
+            <select class="form-control form-control-sm" @onchange="ChangeSelectedSupplier">
+                @if (selectedSupplier == 0)
+                {
+                    <option selected value=0>@("<Все>")</option>
+                }
+                else
+                {
+                    <option value=0>@("<Все>")</option>
+                }
 
+                @foreach (var supplier in suppliers)
+                {
+                    if (selectedSupplier == supplier.Id)
+                    {
+                        <option selected value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
+                    else
+                    {
+                        <option value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col pl-0">
+            <lable>Дата начала:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedBeginDate" @onchange="ChangeBeginDate" />
+        </div>
+        <div class="col pl-0">
+            <lable>Дата окончания:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedEndDate" @onchange="ChangeEndDate" />
+        </div>
+    </div>
+
+    <div class="row" style="background-color: #0f4043;color: white;text-align: center;vertical-align: middle;">
+        <div class="col">
+            <div class="row">
+                <div class="col-6 border">
+                    Поставщик / Материал
+                </div>
+                <div class="col-2 border">
+                    Количество
+                </div>
+                <div class="col-2 border">
+                    Дата документа
+                </div>
+                <div class="col-2 border">
+                    Номер документа
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            @foreach (var supplier in suppliers)
+            {
+
+                var materials = lines.Where(d => d.Supplier.Id == supplier.Id).ToList();
+                if (materials.Count != 0)
+                {
+                    <SuppliersComponent Materials="materials" Supplier="supplier" />
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <LoadComponent />
 }

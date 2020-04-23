@@ -24,19 +24,24 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                materialCategory = DatabaseProvider.GetMaterialCategory(Id);
-                oldName = materialCategory?.Name;
-            }
-            else
-            {
-                materialCategory = new MaterialCategory();
-            }
+                isLoad = false;
 
-            isLoad = true;
+                if (Id != 0)
+                {
+                    materialCategory = DatabaseProvider.GetMaterialCategory(Id);
+                    oldName = materialCategory?.Name;
+                }
+                else
+                {
+                    materialCategory = new MaterialCategory();
+                }
+
+                isLoad = true;
+
+                StateHasChanged();
+            }
         }
 
         protected string GetDescription()

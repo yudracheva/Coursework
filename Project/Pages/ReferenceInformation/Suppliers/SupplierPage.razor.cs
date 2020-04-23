@@ -30,22 +30,27 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                supplier = DatabaseProvider.GetSupplier(Id);
-                oldName = supplier?.OrganizationName;
-                selectedBank = supplier.Bank?.Id ?? 0;
-            }
-            else
-            {
-                supplier = new Supplier();
-            }
+                isLoad = false;
 
-            banks = DatabaseProvider.GetBanks();
+                if (Id != 0)
+                {
+                    supplier = DatabaseProvider.GetSupplier(Id);
+                    oldName = supplier?.OrganizationName;
+                    selectedBank = supplier.Bank?.Id ?? 0;
+                }
+                else
+                {
+                    supplier = new Supplier();
+                }
 
-            isLoad = true;
+                banks = DatabaseProvider.GetBanks();
+
+                isLoad = true;
+
+                StateHasChanged();
+            }
         }
 
         protected string GetDescription()

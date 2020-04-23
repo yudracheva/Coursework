@@ -4,19 +4,72 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Project.Models.ReferenceInformation;
+using Project.Models.Documents;
+using Project.Models.Reports;
+using NLog.Filters;
 
 namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
 {
     public partial class ReportReceiptMaterialsBySuppliersPage
     {
-        [Inject]
-        public IDatabaseProvider DatabaseProvider { get; set; }
+        protected List<ReportReceiptMaterialsBySupplier> lines;
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        protected string selectedBeginDate;
+        protected string selectedEndDate;
+        protected int selectedSupplier;
+        protected List<Supplier> suppliers;
 
-        protected bool isLoad;
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                suppliers = DatabaseProvider.GetSuppliers();
+                selectedEndDate = DateTime.Today.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                selectedBeginDate = DateTime.Today.AddMonths(-1).ToString(DATE_TO_PAGE_STRING_FORMAT);
 
+                UpdateData();
+            }
+        }
 
+        private void UpdateData()
+        {
+            isLoad = false;
+
+            lines = DatabaseProvider.GetReportReceiptMaterialsBySupplier();
+
+            var beginDate = DateTime.Parse(selectedBeginDate);
+            var endDate = DateTime.Parse(selectedEndDate);
+            if (selectedSupplier != 0)
+                lines = lines.Where(d => d.Supplier.Id == selectedSupplier).ToList();
+
+            lines = lines.Where(d => d.DocumentDate > beginDate && d.DocumentDate < endDate).ToList();
+            isLoad = true;
+
+            StateHasChanged();
+        }
+
+        protected void ChangeEndDate(ChangeEventArgs changeEventArgs)
+        {
+            var date = DateTime.Parse(changeEventArgs.Value.ToString());
+            selectedEndDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
+
+            UpdateData();
+        }
+
+        protected void ChangeBeginDate(ChangeEventArgs changeEventArgs)
+        {
+            var date = DateTime.Parse(changeEventArgs.Value.ToString());
+            selectedBeginDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
+
+            UpdateData();
+        }
+
+        protected void ChangeSelectedSupplier(ChangeEventArgs changeEventArgs)
+        {
+            selectedSupplier = Convert.ToInt32(changeEventArgs.Value);
+
+            UpdateData();
+        }
     }
 }

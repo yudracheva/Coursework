@@ -24,19 +24,24 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (true)
             {
-                bank = DatabaseProvider.GetBank(Id);
-                oldName = bank?.Name;
-            }
-            else
-            {
-                bank = new Bank();
-            }
+                isLoad = false;
 
-            isLoad = true;
+                if (Id != 0)
+                {
+                    bank = DatabaseProvider.GetBank(Id);
+                    oldName = bank?.Name;
+                }
+                else
+                {
+                    bank = new Bank();
+                }
+
+                isLoad = true;
+
+                StateHasChanged();
+            }
         }
 
         protected string GetDescription()

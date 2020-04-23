@@ -1,6 +1,7 @@
 ﻿using Project.Interfaces;
 using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Models.Reports;
 using Project.Utils;
 using System;
 using System.Collections.Generic;
@@ -1363,6 +1364,49 @@ namespace Project.Providers
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        public List<ReportReceiptMaterialsBySupplier> GetReportReceiptMaterialsBySupplier()
+        {
+            var result = new List<ReportReceiptMaterialsBySupplier>();
+
+            var sql = @"select r.NUMBER, 
+                               r.DATE, 
+                               r.SUPPLIER, 
+                               l.MATERIAL, 
+                               l.COUNT 
+                          from RECEIPT_OF_MATERIALS as r 
+                     left join RECEIPT_OF_MATERIALS_LINES as l 
+                            on r.NUMBER = l.DOCUMENT_NUMBER";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var line = new ReportReceiptMaterialsBySupplier()
+                    {
+                        Count = dbReader.GetInt("COUNT"),
+                        DocumentDate = dbReader.GetDateTime("DATE"),
+                        DocumentNumber = dbReader.GetInt("NUMBER")
+                    };
+
+                    var supplierId = dbReader.GetInt("SUPPLIER");
+                    if (supplierId != 0)
+                        line.Supplier = GetSupplier(supplierId);
+
+                    var materialId = dbReader.GetInt("MATERIAL");
+                    if (materialId != 0)
+                        line.Material = GetMaterial(materialId);
+
+                    result.Add(line);
+                }
+            }
+
+            return result;
         }
     }
 }

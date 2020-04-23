@@ -33,11 +33,6 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
             selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
         }
 
-        protected void Dds()
-        {
-
-        }
-
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
@@ -49,7 +44,12 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         protected void ChangePrice(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var price = Convert.ToInt32(agrs.Value);
+            var price = 0m;
+            if (String.IsNullOrEmpty(agrs.Value.ToString()))
+                price = 0;
+            else
+                price = Convert.ToDecimal(agrs.Value.ToString().Replace('.', ','));
+
             line.Price = price < 0 ? 0 : price;
             line.Sum = line.Price * line.Count;
         }
@@ -57,7 +57,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         protected void ChangeSum(ChangeEventArgs agrs, int numberLine)
         {
             var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var sum = Convert.ToInt32(agrs.Value);
+            var sum = Convert.ToDecimal(agrs.Value.ToString().Replace('.',','));
             line.Sum = sum < 0 ? 0 : sum;
             if (line.Count != 0)
                 line.Price = line.Sum / line.Count;
@@ -67,6 +67,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
         {
             document.Materials.Add(new LineOfMaterials());
             ChangesNumbers();
+            StateHasChanged();
         }
 
         private void ChangesNumbers()
@@ -79,26 +80,29 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                document = DatabaseProvider.GetActOfReceipt(Id);
-                selectedSupplier = document.Supplier?.Id ?? 0;
-                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                isLoad = false;
+
+                if (Id != 0)
+                {
+                    document = DatabaseProvider.GetActOfReceipt(Id);
+                    selectedSupplier = document.Supplier?.Id ?? 0;
+                    selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+                else
+                {
+                    document = new ActOfReceipt();
+                    selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+
+                suppliers = DatabaseProvider.GetSuppliers();
+                materials = DatabaseProvider.GetMaterials();
+
+                isLoad = true;
+
+                StateHasChanged();
             }
-            else
-            {
-                document = new ActOfReceipt();
-                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
-            }
-
-            suppliers = DatabaseProvider.GetSuppliers();
-            materials = DatabaseProvider.GetMaterials();
-
-            isLoad = true;
-
-            StateHasChanged();
         }
 
         protected void Save()

@@ -20,7 +20,11 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected override void OnAfterRender(bool firstRender)
         {
-            Update();
+            if (true)
+            {
+                Update();
+                StateHasChanged();
+            }
         }
 
         protected void Edit(int id)

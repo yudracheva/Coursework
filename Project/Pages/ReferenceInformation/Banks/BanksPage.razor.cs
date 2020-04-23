@@ -19,7 +19,11 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnAfterRender(bool firstRender)
         {
-            UpdateData();
+            if (firstRender)
+            {
+                UpdateData();
+                StateHasChanged();
+            }
         }
 
         protected void Edit(int id)

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Project.Pages.ReferenceInformation.Matetials
 {
-    public class MaterialsPageIndex : ComponentBase
+    public partial class MaterialsPage
     {
         [Inject]
         public IDatabaseProvider DatabaseProvider { get; set; }
@@ -19,7 +19,10 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected override void OnAfterRender(bool firstRender)
         {
-            Update();
+            if (firstRender)
+            {
+                Update();
+            }
         }
 
         protected void Edit(int id)
@@ -40,6 +43,8 @@ namespace Project.Pages.ReferenceInformation.Matetials
             materials = DatabaseProvider.GetMaterials();
 
             isLoad = true;
+
+            StateHasChanged();
         }
     }
 }

@@ -4,84 +4,92 @@
 
 <h3>Акт о приемке товара</h3>
 
-<div class="row">
-    <div class="col-1">
-        <button class="btn btn-outline-secondary btn-sm" @onclick="Save">Сохранить</button>
+@if (isLoad)
+{
+    <div class="row">
+        <div class="col-1">
+            <button class="btn btn-outline-secondary btn-sm" @onclick="Save">Сохранить</button>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col">
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Номер: </label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control form-control-sm" value="@document.Number" disabled />
+    <div class="row">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Номер: </label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control form-control-sm" value="@document.Number" disabled />
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Дата: </label>
+                <div class="col-sm-9">
+                    <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
+                </div>
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Дата: </label>
-            <div class="col-sm-9">
-                <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedDate" @onchange="ChangeDate" />
-            </div>
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label">Поставщик:</label>
+        <div class="col-sm-9">
+            <select class="form-control form-control-sm" @bind="selectedSupplier">
+                <option value=0>@("<Пусто>")</option>
+                @foreach (var supplier in suppliers)
+                {
+                    <option value=@supplier.Id>@supplier.OrganizationName</option>
+                }
+            </select>
         </div>
     </div>
-</div>
 
-<div class="form-group row">
-    <label class="col-sm-3 col-form-label">Поставщик:</label>
-    <div class="col-sm-9">
-        <select class="form-control form-control-sm" @bind="selectedSupplier">
-            <option value=0>@("<Пусто>")</option>
-            @foreach (var supplier in suppliers)
-            {
-                <option value=@supplier.Id>@supplier.OrganizationName</option>
-            }
-        </select>
+    <div class="row pb-2">
+        <div class="col">
+            <button class="btn btn-sm btn-outline-secondary " @onclick="AddLine">Добавить строку</button>
+        </div>
     </div>
-</div>
 
-<div class="row pb-2">
-    <div class="col">
-        <button class="btn btn-sm btn-outline-secondary " @onclick="AddLine">Добавить строку</button>
-    </div>
-</div>
-
-<table class="table table-striped table-hover table-sm">
-    <thead>
-        <tr>
-            <th style="width:10%">№</th>
-            <th>Материал</th>
-            <th style="width:15%">Количестно</th>
-            <th style="width:15%">Цена</th>
-            <th style="width:15%">Сумма</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var material in document.Materials)
-        {
+    <table class="table table-striped table-hover table-sm">
+        <thead>
             <tr>
-                <th>@material.Number</th>
-                <th>
-                    <select class="form-control form-control-sm" @bind="@material.SelectedMaterial">
-                        <option value=0>@("<Пусто>")</option>
-                        @foreach (var materialForList in materials)
-                        {
-                            <option value=@materialForList.Id>@materialForList.Name</option>
-                        }
-                    </select>
-                </th>
-                <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" min="0" />
-                </th>
-                <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangePrice(agrs, material.Number))" value="@material.Price" min="0" />
-                </th>
-                <th>
-                    <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" value="@material.Sum" min="0" />
-                </th>
+                <th style="width:10%">№</th>
+                <th>Материал</th>
+                <th style="width:15%">Количестно</th>
+                <th style="width:15%">Цена</th>
+                <th style="width:15%">Сумма</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var material in document.Materials)
+            {
+                <tr>
+                    <th>@material.Number</th>
+                    <th>
+                        <select class="form-control form-control-sm" @bind="@material.SelectedMaterial">
+                            <option value=0>@("<Пусто>")</option>
+                            @foreach (var materialForList in materials)
+                            {
+                                <option value=@materialForList.Id>@materialForList.Name</option>
+                            }
+                        </select>
+                    </th>
+                    <th>
+                        <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" min="0" />
+                    </th>
+                    <th>
+                        <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangePrice(agrs, material.Number))" step="0.01"  value="@material.Price.ToString().Replace(',','.')" min="0" />
+                    </th>
+                    <th>
+                        <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" step="0.01" value="@material.Sum.ToString().Replace(',','.')" min="0" />
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <LoadComponent />
+}

@@ -28,24 +28,29 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                material = DatabaseProvider.GetMaterial(Id);
-                oldName = material?.Name;
-                selectedMaterialCategory = material.Category?.Id ?? 0;
-                selectedSupplier = material.Supplier?.Id ?? 0;
-            }
-            else
-            {
-                material = new Material();
-            }
+                isLoad = false;
 
-            materialCategories = DatabaseProvider.GetMaterialСategories();
-            suppliers = DatabaseProvider.GetSuppliers();
+                if (Id != 0)
+                {
+                    material = DatabaseProvider.GetMaterial(Id);
+                    oldName = material?.Name;
+                    selectedMaterialCategory = material.Category?.Id ?? 0;
+                    selectedSupplier = material.Supplier?.Id ?? 0;
+                }
+                else
+                {
+                    material = new Material();
+                }
 
-            isLoad = true;
+                materialCategories = DatabaseProvider.GetMaterialСategories();
+                suppliers = DatabaseProvider.GetSuppliers();
+
+                isLoad = true;
+
+                StateHasChanged();
+            }
         }
 
         protected string GetDescription()
