@@ -26,7 +26,7 @@ namespace Project.Pages.ReferenceInformation.Matetials
         protected string oldName;
         protected bool isLoad;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 

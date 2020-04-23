@@ -31,7 +31,7 @@ namespace Project.Pages.Documents.PaymentRequestPages
             selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
         }
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 

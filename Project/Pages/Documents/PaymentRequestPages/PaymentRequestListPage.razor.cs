@@ -17,7 +17,7 @@ namespace Project.Pages.Documents.PaymentRequestPages
 
         protected List<PaymentRequest> documents;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             UpdateData();
         }

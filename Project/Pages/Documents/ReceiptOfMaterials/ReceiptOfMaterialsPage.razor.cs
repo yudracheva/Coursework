@@ -77,7 +77,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
             }
         }
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 

@@ -18,7 +18,7 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected bool isLoad;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             Update();
         }

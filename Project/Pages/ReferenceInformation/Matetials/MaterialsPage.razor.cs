@@ -17,7 +17,7 @@ namespace Project.Pages.ReferenceInformation.Matetials
 
         protected bool isLoad;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             Update();
         }

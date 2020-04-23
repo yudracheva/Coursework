@@ -22,7 +22,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected bool isLoad;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 

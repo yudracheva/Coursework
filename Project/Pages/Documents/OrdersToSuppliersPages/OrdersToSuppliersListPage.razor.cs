@@ -17,7 +17,7 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
 
         protected List<OrdersToSuppliers> documents;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             UpdateData();
         }

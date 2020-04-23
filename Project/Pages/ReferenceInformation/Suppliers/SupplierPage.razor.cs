@@ -28,7 +28,7 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
         protected int selectedBank;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 

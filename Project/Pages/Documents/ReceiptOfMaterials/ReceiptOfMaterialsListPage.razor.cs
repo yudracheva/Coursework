@@ -17,7 +17,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
 
         protected List<ActOfReceipt> documents;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             UpdateData();
         }

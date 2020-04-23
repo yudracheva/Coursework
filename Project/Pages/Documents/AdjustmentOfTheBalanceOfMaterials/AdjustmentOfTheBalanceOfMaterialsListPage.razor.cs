@@ -17,7 +17,7 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
 
         protected List<CorrectionOfBalanceMaterials> documents;
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             UpdateData();
         }

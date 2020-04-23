@@ -57,7 +57,7 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
             }
         }
 
-        protected override void OnInitialized()
+        protected override void OnAfterRender(bool firstRender)
         {
             isLoad = false;
 
