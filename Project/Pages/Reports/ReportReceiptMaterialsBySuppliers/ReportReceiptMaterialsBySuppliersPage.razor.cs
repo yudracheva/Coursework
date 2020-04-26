@@ -13,8 +13,10 @@ namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
 {
     public partial class ReportReceiptMaterialsBySuppliersPage
     {
-        protected List<ReportReceiptMaterialsBySupplier> lines;
+        [Parameter]
+        public int SupplierId { get; set; }
 
+        protected List<ReportReceiptMaterialsBySupplier> lines;
         protected string selectedBeginDate;
         protected string selectedEndDate;
         protected int selectedSupplier;
@@ -44,6 +46,12 @@ namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
                 lines = lines.Where(d => d.Supplier.Id == selectedSupplier).ToList();
 
             lines = lines.Where(d => d.DocumentDate > beginDate && d.DocumentDate < endDate).ToList();
+            if (SupplierId != 0)
+            {
+                lines = lines.Where(d => (d.Supplier != null) && (d.Supplier.Id.Equals(SupplierId))).ToList();
+                selectedSupplier = SupplierId;
+            }
+
             isLoad = true;
 
             StateHasChanged();

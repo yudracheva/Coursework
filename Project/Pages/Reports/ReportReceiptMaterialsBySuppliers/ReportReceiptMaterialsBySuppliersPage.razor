@@ -1,10 +1,12 @@
 ﻿@page "/report-receipt-materials-by-suppliers"
+@page "/report-receipt-materials-by-suppliers/{supplierId:int}"
+
 @inherits ReportsComponent
 <h3>Отчет о поступлении материалов по поставщикам</h3>
 
 @if (isLoad)
 {
-    <div class="row pb-1" >
+    <div class="row pb-1">
         <div class="col pl-0">
             <lable>Поставщик:</lable>
             <select class="form-control form-control-sm" @onchange="ChangeSelectedSupplier">

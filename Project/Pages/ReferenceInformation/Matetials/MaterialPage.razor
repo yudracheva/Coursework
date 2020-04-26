@@ -26,29 +26,39 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Категория:</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-sm" @bind="selectedMaterialCategory">
-                        <option value=0>@("<Пусто>")</option>
-                        @foreach (var materialCategory in materialCategories)
-                        {
-                            <option value=@materialCategory.Id>@materialCategory.Name</option>
-                        }
-                    </select>
+            <div class="input-group row">
+                <label class="col-sm-3 col-form-label">Категория: </label>
+                <div class="col-sm-9 mb-3">
+                    <div class="input-group ml-2">
+                        <select class="custom-select custom-select-sm" @bind="selectedMaterialCategory">
+                            <option value=0>@("<Пусто>")</option>
+                            @foreach (var materialCategory in materialCategories)
+                            {
+                                <option value=@materialCategory.Id>@materialCategory.Name</option>
+                            }
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="OpenMaterial">Открыть</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Поставщик:</label>
-                <div class="col-sm-9">
-                    <select class="form-control form-control-sm" @bind="selectedSupplier">
-                        <option value=0>@("<Пусто>")</option>
-                        @foreach (var supplier in suppliers)
-                        {
-                            <option value=@supplier.Id>@supplier.OrganizationName</option>
-                        }
-                    </select>
+            <div class="input-group row">
+                <label class="col-sm-3 col-form-label">Поставщик: </label>
+                <div class="col-sm-9 mb-3">
+                    <div class="input-group ml-2">
+                        <select class="custom-select custom-select-sm" @bind="selectedSupplier">
+                            <option value=0>@("<Пусто>")</option>
+                            @foreach (var supplier in suppliers)
+                            {
+                                <option value=@supplier.Id>@supplier.OrganizationName</option>
+                            }
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="OpenSupplier">Открыть</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

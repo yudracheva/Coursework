@@ -12,7 +12,7 @@ namespace Project.Providers
     public class SQLiteProvider : IDatabaseProvider
     {
         private readonly SettingsProvider _settingsProvider;
-        private const string DATE_STRING = "dd-MM-yyyy HH:mm:ss";
+        private const string DATE_STRING = "MM/dd/yyyy HH:mm:ss";
 
         public SQLiteProvider(SettingsProvider settingsProvider)
         {

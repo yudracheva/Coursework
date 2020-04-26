@@ -93,5 +93,17 @@ namespace Project.Pages.ReferenceInformation.Matetials
                 Console.WriteLine($"Не удалось сохранить. {ex.Message}");
             }
         }
+
+        protected void OpenMaterial()
+        {
+            if (selectedMaterialCategory != 0)
+                NavigationManager.NavigateTo("/material-categories/" + selectedMaterialCategory);
+        }
+
+        protected void OpenSupplier()
+        {
+            if (selectedSupplier != 0)
+                NavigationManager.NavigateTo("/suppliers/" + selectedSupplier);
+        }
     }
 }

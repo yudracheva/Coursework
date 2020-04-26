@@ -2,6 +2,7 @@
 using Project.Interfaces;
 using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,44 +29,29 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
 
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
-            var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
-        }
-
-        protected void Dds()
-        {
-
+            selectedDate = PageUtils.ChangeDate(changeEventArgs.Value);
         }
 
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var count = Convert.ToInt32(agrs.Value);
-            line.Count = count < 0 ? 0 : count;
-            line.Sum = line.Price * line.Count;
+            PageUtils.ChangeCount(agrs.Value, document.Materials, numberLine);
         }
 
         protected void ChangePrice(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var price = Convert.ToInt32(agrs.Value);
-            line.Price = price < 0 ? 0 : price;
-            line.Sum = line.Price * line.Count;
+            PageUtils.ChangePrice(agrs.Value, document.Materials, numberLine);
         }
 
         protected void ChangeSum(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var sum = Convert.ToInt32(agrs.Value);
-            line.Sum = sum < 0 ? 0 : sum;
-            if (line.Count != 0)
-                line.Price = line.Sum / line.Count;
+            PageUtils.ChangeSum(agrs.Value, document.Materials, numberLine);
         }
 
         protected void AddLine()
         {
             document.Materials.Add(new LineOfMaterials());
             ChangesNumbers();
+            StateHasChanged();
         }
 
         private void ChangesNumbers()
@@ -78,26 +64,29 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                document = DatabaseProvider.GetOrderToSupplier(Id);
-                selectedSupplier = document.Supplier?.Id ?? 0;
-                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                isLoad = false;
+
+                if (Id != 0)
+                {
+                    document = DatabaseProvider.GetOrderToSupplier(Id);
+                    selectedSupplier = document.Supplier?.Id ?? 0;
+                    selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+                else
+                {
+                    document = new OrdersToSuppliers();
+                    selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+
+                suppliers = DatabaseProvider.GetSuppliers();
+                materials = DatabaseProvider.GetMaterials();
+
+                isLoad = true;
+
+                StateHasChanged();
             }
-            else
-            {
-                document = new OrdersToSuppliers();
-                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
-            }
-
-            suppliers = DatabaseProvider.GetSuppliers();
-            materials = DatabaseProvider.GetMaterials();
-
-            isLoad = true;
-
-            StateHasChanged();
         }
 
         protected void Save()

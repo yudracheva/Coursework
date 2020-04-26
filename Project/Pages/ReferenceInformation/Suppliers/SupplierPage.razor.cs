@@ -83,5 +83,11 @@ namespace Project.Pages.ReferenceInformation.Suppliers
                 Console.WriteLine($"Не удалось сохранить. {ex.Message}");
             }
         }
+
+        protected void OpenBank()
+        {
+            if (selectedBank != 0)
+                NavigationManager.NavigateTo("/banks/" + selectedBank);
+        }
     }
 }

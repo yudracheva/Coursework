@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Project.Interfaces;
 using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,38 +31,22 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
 
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
-            var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
+            selectedDate = PageUtils.ChangeDate(changeEventArgs.Value);
         }
 
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var count = Convert.ToInt32(agrs.Value);
-            line.Count = count < 0 ? 0 : count;
-            line.Sum = line.Price * line.Count;
+            PageUtils.ChangeCount(agrs.Value, document.Materials, numberLine);
         }
 
         protected void ChangePrice(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var price = 0m;
-            if (String.IsNullOrEmpty(agrs.Value.ToString()))
-                price = 0;
-            else
-                price = Convert.ToDecimal(agrs.Value.ToString().Replace('.', ','));
-
-            line.Price = price < 0 ? 0 : price;
-            line.Sum = line.Price * line.Count;
+            PageUtils.ChangePrice(agrs.Value, document.Materials, numberLine);
         }
 
         protected void ChangeSum(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var sum = Convert.ToDecimal(agrs.Value.ToString().Replace('.',','));
-            line.Sum = sum < 0 ? 0 : sum;
-            if (line.Count != 0)
-                line.Price = line.Sum / line.Count;
+            PageUtils.ChangeSum(agrs.Value, document.Materials, numberLine);
         }
 
         protected void AddLine()

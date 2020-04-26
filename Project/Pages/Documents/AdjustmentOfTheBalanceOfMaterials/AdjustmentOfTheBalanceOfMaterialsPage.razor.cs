@@ -2,6 +2,7 @@
 using Project.Interfaces;
 using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,26 +28,19 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
 
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
-            var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
-        }
-
-        protected void Dds()
-        {
-
+            selectedDate = PageUtils.ChangeDate(changeEventArgs.Value);
         }
 
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
-            var line = document.Materials.FirstOrDefault(d => d.Number == numberLine);
-            var count = Convert.ToInt32(agrs.Value);
-            line.Count = count < 0 ? 0 : count;
+            PageUtils.ChangeCount(agrs.Value, document.Materials, numberLine);
         }
 
         protected void AddLine()
         {
             document.Materials.Add(new LineOfMaterials());
             ChangesNumbers();
+            StateHasChanged();
         }
 
         private void ChangesNumbers()
@@ -59,24 +53,27 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                document = DatabaseProvider.GetCorrectionOfBalanceMaterials(Id);
-                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                isLoad = false;
+
+                if (Id != 0)
+                {
+                    document = DatabaseProvider.GetCorrectionOfBalanceMaterials(Id);
+                    selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+                else
+                {
+                    document = new CorrectionOfBalanceMaterials();
+                    selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+
+                materials = DatabaseProvider.GetMaterials();
+
+                isLoad = true;
+
+                StateHasChanged();
             }
-            else
-            {
-                document = new CorrectionOfBalanceMaterials();
-                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
-            }
-
-            materials = DatabaseProvider.GetMaterials();
-
-            isLoad = true;
-
-            StateHasChanged();
         }
 
         protected void Save()
