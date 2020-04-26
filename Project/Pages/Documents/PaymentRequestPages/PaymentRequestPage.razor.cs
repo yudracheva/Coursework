@@ -2,6 +2,7 @@
 using Project.Interfaces;
 using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
+using Project.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,31 +28,33 @@ namespace Project.Pages.Documents.PaymentRequestPages
 
         protected void ChangeDate(ChangeEventArgs changeEventArgs)
         {
-            var date = DateTime.Parse(changeEventArgs.Value.ToString());
-            selectedDate = date.ToString(DATE_TO_PAGE_STRING_FORMAT);
+            selectedDate = PageUtils.ChangeDate(changeEventArgs.Value);
         }
 
         protected override void OnAfterRender(bool firstRender)
         {
-            isLoad = false;
-
-            if (Id != 0)
+            if (firstRender)
             {
-                document = DatabaseProvider.GetPaymentRequest(Id);
-                selectedSupplier = document.Supplier?.Id ?? 0;
-                selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                isLoad = false;
+
+                if (Id != 0)
+                {
+                    document = DatabaseProvider.GetPaymentRequest(Id);
+                    selectedSupplier = document.Supplier?.Id ?? 0;
+                    selectedDate = document.CreatedDate.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+                else
+                {
+                    document = new PaymentRequest();
+                    selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
+                }
+
+                suppliers = DatabaseProvider.GetSuppliers();
+
+                isLoad = true;
+
+                StateHasChanged();
             }
-            else
-            {
-                document = new PaymentRequest();
-                selectedDate = DateTime.Now.ToString(DATE_TO_PAGE_STRING_FORMAT);
-            }
-
-            suppliers = DatabaseProvider.GetSuppliers();
-
-            isLoad = true;
-
-            StateHasChanged();
         }
 
         protected void Save()
@@ -76,6 +79,16 @@ namespace Project.Pages.Documents.PaymentRequestPages
             catch (Exception ex)
             {
                 Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+            }
+        }
+
+        protected void ChangeSum(ChangeEventArgs args)
+        {
+            var value = 0;
+            if (!String.IsNullOrEmpty(args?.Value?.ToString()))
+            {
+                var sum = Convert.ToDecimal(value.ToString().Replace('.', ','));
+                document.Sum = sum < 0 ? 0 : sum;
             }
         }
     }
