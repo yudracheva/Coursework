@@ -84,11 +84,21 @@ namespace Project.Pages.Documents.PaymentRequestPages
 
         protected void ChangeSum(ChangeEventArgs args)
         {
-            var value = 0;
             if (!String.IsNullOrEmpty(args?.Value?.ToString()))
             {
-                var sum = Convert.ToDecimal(value.ToString().Replace('.', ','));
-                document.Sum = sum < 0 ? 0 : sum;
+                var sum = Convert.ToDecimal(args.Value.ToString());
+                if (sum <= 0)
+                {
+                    sum = 0;
+                }
+                else
+                {
+                    document.Sum = sum < 0 ? 0 : sum;
+                }
+            }
+            else
+            {
+                document.Sum = 0;
             }
         }
     }

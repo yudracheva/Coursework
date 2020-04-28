@@ -79,5 +79,10 @@ namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
 
             UpdateData();
         }
+
+        protected void Print()
+        {
+
+        }
     }
 }

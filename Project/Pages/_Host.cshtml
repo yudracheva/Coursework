@@ -14,6 +14,16 @@
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
+    <script>
+        function printData() {
+            var divToPrint = document.getElementById("printTable");
+            newWin = window.open("");
+            newWin.document.head.app
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.print();
+            //newWin.close();
+        }
+    </script>
 </head>
 <body>
     <app>

@@ -58,6 +58,7 @@
                 <th style="width:15%">Количестно</th>
                 <th style="width:15%">Цена</th>
                 <th style="width:15%">Сумма</th>
+                <th style="width:15%"></th>
             </tr>
         </thead>
         <tbody>
@@ -82,6 +83,11 @@
                     </th>
                     <th>
                         <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" step="0.01" value="@material.Sum.ToString().Replace(',','.')" min="0" />
+                    </th>
+                    <th>
+                        <div class="row float-right">
+                            <div class="col-1"><button class="btn btn-sm btn-outline-secondary" title="Удалить" @onclick="(()=> Remove(material.Number))"><span class="oi oi-x"></span></button></div>
+                        </div>
                     </th>
                 </tr>
             }

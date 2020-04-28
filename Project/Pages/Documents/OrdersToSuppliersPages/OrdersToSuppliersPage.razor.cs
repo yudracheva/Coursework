@@ -111,12 +111,17 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
                 }
 
                 DatabaseProvider.SaveOrderToSupplier(document);
-                NavigationManager.NavigateTo("/receipt-of-materials");
+                NavigationManager.NavigateTo("/orders-to-suppliers");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Не удалось сохранить. {ex.Message}");
             }
+        }
+
+        protected void Remove(int number)
+        {
+            PageUtils.RemoveLine(document.Materials, number);
         }
     }
 }
