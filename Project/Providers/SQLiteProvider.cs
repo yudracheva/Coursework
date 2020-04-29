@@ -177,7 +177,7 @@ namespace Project.Providers
             return null;
         }
 
-        public List<Material> GetMaterials()
+        public List<Material> GetMaterials(int supplierId = 0, bool deliveriesStopped = false)
         {
             var result = new List<Material>();
 
@@ -193,13 +193,16 @@ namespace Project.Providers
                      left join SUPPLIERS s
                             on m.SUPPLIER = s.ID
                      left join MATERIALS_CATEGORIES c
-                            on m.Category = c.ID";
+                            on m.Category = c.ID
+                        where ((@supplierId != 0 and m.SUPPLIER = @supplierId)
+                           or (@supplierId = 0))";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
                 con.Open();
 
                 using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@supplierId", supplierId);
                 using var dbReader = cmd.ExecuteReader();
                 while (dbReader.Read())
                 {
@@ -1407,6 +1410,11 @@ namespace Project.Providers
             }
 
             return result;
+        }
+
+        public List<ReportListsOfMaterialsOnTheWay> GetReportListsOfMaterialsOnTheWay()
+        {
+            throw new NotImplementedException();
         }
     }
 }

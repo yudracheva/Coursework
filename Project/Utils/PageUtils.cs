@@ -20,7 +20,7 @@ namespace Project.Utils
         public static string ChangeDate(object value)
         {
             var date = DateTime.Parse(value.ToString());
-            return date.ToString(DefaultComponentBase.DATE_TO_PAGE_STRING_FORMAT);
+            return date.ToString(DocumentComponentBase.DATE_TO_PAGE_STRING_FORMAT);
         }
 
         public static void ChangePrice(object value, List<LineOfMaterials> materials, int numberLine)

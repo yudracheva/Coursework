@@ -1,3 +1,81 @@
 ﻿@page "/lists-of-materials-on-the-way"
 
+@inherits ReportsComponent
+
 <h3>Ведомости материалов в пути</h3>
+
+@if (isLoad)
+{
+    <div class="row pb-1">
+        <div class="col pl-0">
+            <lable>Материал:</lable>
+            <select class="form-control form-control-sm" @onchange="ChangeSelectedMaterial">
+                @if (selectedMaterial == 0)
+                {
+                    <option selected value=0>@("<Все>")</option>
+                }
+                else
+                {
+                    <option value=0>@("<Все>")</option>
+                }
+
+                @foreach (var material in materials)
+                {
+                    if (selectedMaterial == material.Id)
+                    {
+                        <option selected value=@material.Id>@material.Name</option>
+                    }
+                    else
+                    {
+                        <option value=@material.Id>@material.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col pl-0">
+            <lable>Дата начала:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedBeginDate" @onchange="ChangeBeginDate" />
+        </div>
+        <div class="col pl-0">
+            <lable>Дата окончания:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedEndDate" @onchange="ChangeEndDate" />
+        </div>
+        <div class="col pl-0">
+            <button class="btn btn-sm btn-outline-secondary w-100 mt-4" onclick="printData();">Печать</button>
+        </div>
+    </div>
+
+    <div class="row" style="background-color: #0f4043;color: white;text-align: center;vertical-align: middle;">
+        <div class="col">
+            <div class="row">
+                <div class="col-6 border">
+                    Материал
+                </div>
+                <div class="col-2 border">
+                    Количество
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            @if (materials != null && lines != null)
+            { 
+                @foreach (var material in materials)
+                {
+                    var materialsToView = lines.Where(d => d.Material.Id == material.Id).ToList();
+                    if (materialsToView.Count != 0)
+                    {
+                        <MaterialComponent Materials="materialsToView" />
+                    }
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <LoadComponent />
+}

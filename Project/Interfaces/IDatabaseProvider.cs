@@ -21,21 +21,64 @@ namespace Project.Interfaces
         /// Возвращает список материалов
         /// </summary>
         /// <returns>Список всех материалов</returns>
-        List<Material> GetMaterials();
+        List<Material> GetMaterials(int supplierId = 0, bool deliveriesStopped = false);
         
+        /// <summary>
+        /// Удялет документ "Корректировку остатков" по номеру
+        /// </summary>
+        /// <param name="id">Номер документа</param>
         void RemoveCorrectionOfBalanceMaterials(int id);
+
+        /// <summary>
+        /// Возвращает информацию для отчеты "Отчеты о поступлении материалов по поставщикам"
+        /// </summary>
+        /// <returns></returns>
         List<ReportReceiptMaterialsBySupplier> GetReportReceiptMaterialsBySupplier();
+        
+        /// <summary>
+        /// Удаляет документ "Платежное требование" по номеру
+        /// </summary>
+        /// <param name="id">Номер</param>
         void RemovePaymentRequest(int id);
         
+        /// <summary>
+        /// Удаляет документ "Заказ поставщику" по номеру
+        /// </summary>
+        /// <param name="id">Номер документа</param>
         void RemoveOrdersToSuppliers(int id);
         
+        /// <summary>
+        /// Возвращает документ "Платежное требование" по номеру документа
+        /// </summary>
+        /// <param name="id">Номер документа</param>
+        /// <returns></returns>
         PaymentRequest GetPaymentRequest(int id);
         
+        /// <summary>
+        /// Возвращает заказ поставщику по номеру
+        /// </summary>
+        /// <param name="id">Номер заказа поставщику</param>
+        /// <returns></returns>
         OrdersToSuppliers GetOrderToSupplier(int id);
 
+        /// <summary>
+        /// Возвращает документ "Корректировка остатков" по идентификатору
+        /// </summary>
+        /// <param name="id">Номер документа</param>
+        /// <returns></returns>
         CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(int id);
 
+        /// <summary>
+        /// Возвращает список документов "Заказы поставщику"
+        /// </summary>
+        /// <returns>Документов "Заказы поставщику"</returns>
         List<OrdersToSuppliers> GetOrdersToSuppliers();
+
+        /// <summary>
+        /// Возвращает информацию по отчеты "Материалы в пути"
+        /// </summary>
+        /// <returns></returns>
+        List<ReportListsOfMaterialsOnTheWay> GetReportListsOfMaterialsOnTheWay();
 
         /// <summary>
         /// Возвращает информацию по выбранному поставщику
@@ -44,12 +87,28 @@ namespace Project.Interfaces
         /// <returns>Поставщик</returns>
         Supplier GetSupplier(int id);
 
+        /// <summary>
+        /// Возвращает список документов "Корректировка остатков"
+        /// </summary>
+        /// <returns></returns>
         List<CorrectionOfBalanceMaterials> GetCorrectionsOfBalanceMaterials();
        
+        /// <summary>
+        /// Сохраняет документ "Корректировка остатков"
+        /// </summary>
+        /// <param name="document">Документ</param>
         void SaveCorrectionOfBalanceMaterials(CorrectionOfBalanceMaterials document);
         
+        /// <summary>
+        /// Возвращает список документов "Платежное требование"
+        /// </summary>
+        /// <returns></returns>
         List<PaymentRequest> GetPaymentsRequests();
         
+        /// <summary>
+        /// Сохранение документа "Платежное требование"
+        /// </summary>
+        /// <param name="document">Документ</param>
         void SavePaymentRequest(PaymentRequest document);
 
         /// <summary>
@@ -58,6 +117,10 @@ namespace Project.Interfaces
         /// <returns>Список поставщиков</returns>
         List<Supplier> GetSuppliers();
         
+        /// <summary>
+        /// Сохранение заказа поставщику
+        /// </summary>
+        /// <param name="document">Документ</param>
         void SaveOrderToSupplier(OrdersToSuppliers document);
 
         /// <summary>

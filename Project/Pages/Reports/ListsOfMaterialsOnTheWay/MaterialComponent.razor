@@ -1,0 +1,25 @@
+﻿@inherits ReportsComponent
+
+<div class="row" style="background-color: #8f9ea5;">
+    <div class="col-6 float-left border">
+        @if (show)
+        {
+            <button class="p-0 btn btn-sm" @onclick="(()=>show = false)">-</button>
+        }
+        else
+        {
+            <button class="p-0 btn btn-sm" @onclick="(()=>show = true)">+</button>
+        }
+
+        <lable>@reportListsOfMaterialsOnTheWay.Material.Name</lable>
+    </div>
+    <div class="col-2 border">
+        @Materials.Sum(d => d.Count)
+    </div>
+    <div class="col-2 border">
+
+    </div>
+    <div class="col-2 border">
+
+    </div>
+</div>

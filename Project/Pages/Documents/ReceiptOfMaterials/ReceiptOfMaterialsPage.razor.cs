@@ -83,7 +83,7 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
                 }
 
                 suppliers = DatabaseProvider.GetSuppliers();
-                materials = DatabaseProvider.GetMaterials();
+                materials = DatabaseProvider.GetMaterials(selectedSupplier);
 
                 isLoad = true;
 

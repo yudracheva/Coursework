@@ -7,15 +7,9 @@ using System.Threading.Tasks;
 
 namespace Project.Pages.Reports
 {
-    public class ReportsComponent : ComponentBase
+    public class ReportsComponent : DefaultComponentBase
     {
         public const string DATE_TO_PAGE_STRING_FORMAT = "yyyy-MM-ddTHH:mm";
-
-        [Inject]
-        public IDatabaseProvider DatabaseProvider { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
 
         protected bool isLoad;
     }

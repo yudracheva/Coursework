@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
+    <PackageReference Include="toastr" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
