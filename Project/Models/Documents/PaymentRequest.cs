@@ -16,5 +16,10 @@ namespace Project.Models.Documents
         /// Сумма к оплате
         /// </summary>
         public decimal Sum { get; set; }
+
+        /// <summary>
+        /// Акт приемки товара, на основание которого производится оплата
+        /// </summary>
+        public ActOfReceipt Act { get; set; }
     }
 }

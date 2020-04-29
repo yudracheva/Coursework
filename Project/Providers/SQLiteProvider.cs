@@ -1038,7 +1038,8 @@ namespace Project.Providers
             var sql = @"select NUMBER,
                                DATE,
                                SUPPLIER,
-                               SUM
+                               SUM, 
+                               RECEIPT 
                           from PAYMENT_REQUEST
                          where NUMBER = @Id";
 
@@ -1061,6 +1062,10 @@ namespace Project.Providers
                     var supplier = dbReader.GetInt("SUPPLIER");
                     if (supplier != 0)
                         paymentRequest.Supplier = GetSupplier(supplier);
+
+                    var act = dbReader.GetInt("RECEIPT");
+                    if (act != null)
+                        paymentRequest.Act = GetActOfReceipt(act);
 
                     return paymentRequest;
                 }
@@ -1288,8 +1293,8 @@ namespace Project.Providers
             if (id == 0)
                 id = GetGenNumber_PaymentRequest();
 
-            var sql = @"insert or replace into PAYMENT_REQUEST (NUMBER, DATE, SUM, SUPPLIER)
-                                  values (@Id, @DATE, @SUM, @Supplier)";
+            var sql = @"insert or replace into PAYMENT_REQUEST (NUMBER, DATE, SUM, SUPPLIER, RECEIPT)
+                                  values (@Id, @DATE, @SUM, @Supplier, @Receipt)";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
@@ -1301,6 +1306,7 @@ namespace Project.Providers
                     cmd.AddParameter("@DATE", document.CreatedDate.ToString(DATE_STRING));
                     cmd.AddParameter("@SUM", document.Sum);
                     cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
+                    cmd.AddParameter("@Receipt", document.Act?.Number ?? 0);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -1542,7 +1548,7 @@ namespace Project.Providers
                 cmd.AddParameter("@DocumentNumber", number);
 
                 using var dbReader = cmd.ExecuteReader();
-                
+
                 var numberLine = 1;
                 while (dbReader.Read())
                 {
