@@ -552,14 +552,15 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into RECEIPT_OF_MATERIALS (Number, Date, Supplier)
-                                                         values (@DocumentNumber, @DocumentDate, @Supplier)";
+            sql = @"insert or replace into RECEIPT_OF_MATERIALS (Number, Date, Supplier, SUP_ORDER)
+                                                         values (@DocumentNumber, @DocumentDate, @Supplier, @Order)";
 
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
                 cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
                 cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
+                cmd.AddParameter("@Order", document.Order?.Number ?? 0);
 
                 cmd.ExecuteNonQuery();
             }
@@ -618,14 +619,19 @@ namespace Project.Providers
         {
             var sql = @"select NUMBER,
                                DATE,
-                               SUPPLIER 
-                          from RECEIPT_OF_MATERIALS";
+                               SUPPLIER, 
+                               SUP_ORDER as SUP_ORDER
+                          from RECEIPT_OF_MATERIALS
+                         where NUMBER = @Number";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
                 con.Open();
 
                 using var cmd = new SQLiteCommand(sql, con);
+
+                cmd.AddParameter("@Number", id);
+
                 using var dbReader = cmd.ExecuteReader();
                 if (dbReader.Read())
                 {
@@ -638,6 +644,10 @@ namespace Project.Providers
                     var supplier = dbReader.GetInt("SUPPLIER");
                     if (supplier != 0)
                         actOfReceipt.Supplier = GetSupplier(supplier);
+
+                    var order = dbReader.GetInt("SUP_ORDER");
+                    if (order != 0)
+                        actOfReceipt.Order = GetOrderToSupplier(order);
 
                     actOfReceipt.Materials = GetActOfReceiptMaterials(id);
 
@@ -828,6 +838,8 @@ namespace Project.Providers
                     var supplier = dbReader.GetInt("SUPPLIER");
                     if (supplier != 0)
                         ordersToSuppliers.Supplier = GetSupplier(supplier);
+
+                    ordersToSuppliers.Materials = GetOrderToSupplierMaterials(ordersToSuppliers.Number);
 
                     result.Add(ordersToSuppliers);
                 }
@@ -1438,6 +1450,119 @@ namespace Project.Providers
         public List<ReportListsOfMaterialsOnTheWay> GetReportListsOfMaterialsOnTheWay()
         {
             throw new NotImplementedException();
+        }
+
+        public List<OrdersToSuppliers> GetAvailableOrders()
+        {
+            var result = new List<OrdersToSuppliers>();
+
+            var sql = @"select ord.NUMBER, 
+                               ord.DATE, 
+                               ord.SUPPLIER 
+                          from ORDERS_TO_SUPPLIERS ord 
+                    inner join (select o.DOCUMENT_NUMBER as DOCUMENT_NUMBER, 
+		                               o.MATERIAL, 
+		                               o.COUNT - 
+                                         (CASE when rp.ARRIVED_COUNT is null 
+                                               then 0 
+                                               else rp.ARRIVED_COUNT
+                                          end) as REMAINED_COUNT
+	                              from ORDERS_TO_SUPPLIERS_LINES o 
+                             left join (select r.NUMBER as RECEIPT_OF_MATERIALS_NUMBER, 
+				                               r.SUP_ORDER as ORDER_TO_SUPPLIERS, 
+				                               rl.MATERIAL as MATERIAL, 
+				                               COUNT(rl.COUNT) as ARRIVED_COUNT 
+		                                  from RECEIPT_OF_MATERIALS r 
+	                                 left join RECEIPT_OF_MATERIALS_LINES rl 
+		                              group by r.NUMBER, 
+		                                       r.SUP_ORDER, 
+				                               rl.MATERIAL) rp
+                                            on o.DOCUMENT_NUMBER = rp.ORDER_TO_SUPPLIERS 
+	                                       and rp.MATERIAL = o.MATERIAL
+	                                     where REMAINED_COUNT > 0) mat
+	                                        on mat.DOCUMENT_NUMBER = ord.NUMBER 
+                                      group by ord.NUMBER, 
+                                               ord.DATE, 
+                                               ord.SUPPLIER";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var ordersToSuppliers = new OrdersToSuppliers()
+                    {
+                        Number = dbReader.GetInt("NUMBER"),
+                        CreatedDate = dbReader.GetDateTime("DATE")
+                    };
+
+                    var supplier = dbReader.GetInt("SUPPLIER");
+                    if (supplier != 0)
+                        ordersToSuppliers.Supplier = GetSupplier(supplier);
+
+                    ordersToSuppliers.Materials = GetOrderToSupplierMaterials(ordersToSuppliers.Number);
+
+                    result.Add(ordersToSuppliers);
+                }
+            }
+
+            return result;
+        }
+
+        public List<LineOfMaterials> GetAvailableOrderMaterial(int number)
+        {
+            var lines = new List<LineOfMaterials>();
+
+            var sql = @"select o.DOCUMENT_NUMBER as DOCUMENT_NUMBER, 
+		                       o.MATERIAL, 
+		                       o.COUNT - (CASE when rp.ARRIVED_COUNT is null then 0 else  rp.ARRIVED_COUNT  end) as REMAINED_COUNT
+	                      from ORDERS_TO_SUPPLIERS_LINES o 
+                     left join (select r.NUMBER as RECEIPT_OF_MATERIALS_NUMBER, 
+				                       r.SUP_ORDER as ORDER_TO_SUPPLIERS, 
+				                       rl.MATERIAL as MATERIAL, 
+				                       COUNT(rl.COUNT) as ARRIVED_COUNT 
+		                          from RECEIPT_OF_MATERIALS r 
+	                         left join RECEIPT_OF_MATERIALS_LINES rl 
+ 		                      group by r.NUMBER, 
+		                               r.SUP_ORDER, 
+				                       rl.MATERIAL) rp
+                                    on o.DOCUMENT_NUMBER = rp.ORDER_TO_SUPPLIERS 
+	                               and rp.MATERIAL = o.MATERIAL
+	                             where REMAINED_COUNT > 0 
+                                   and o.DOCUMENT_NUMBER = @DocumentNumber";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@DocumentNumber", number);
+
+                using var dbReader = cmd.ExecuteReader();
+                
+                var numberLine = 1;
+                while (dbReader.Read())
+                {
+                    var line = new LineOfMaterials()
+                    {
+                        Number = numberLine,
+                        Count = dbReader.GetInt("REMAINED_COUNT"),
+                        SelectedMaterial = dbReader.GetInt("MATERIAL")
+                    };
+
+                    if (line.SelectedMaterial != 0)
+                        line.Material = GetMaterial(line.SelectedMaterial);
+
+                    numberLine += 1;
+
+                    lines.Add(line);
+                }
+            }
+
+            return lines;
         }
     }
 }

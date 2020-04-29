@@ -9,11 +9,14 @@ namespace Project.Utils
 {
     public static class PageUtils
     {
-        public static void ChangeCount(object value, List<LineOfMaterials> materials, int numberLine)
+        public static void ChangeCount(object value, List<LineOfMaterials> materials, int numberLine, bool checkMimus = true)
         {
             var line = materials.FirstOrDefault(d => d.Number == numberLine);
             var count = Convert.ToInt32(value);
-            line.Count = count < 0 ? 0 : count;
+            if (checkMimus)
+                count = count < 0 ? 0 : count;
+
+            line.Count = count;
             line.Sum = line.Price * line.Count;
         }
 

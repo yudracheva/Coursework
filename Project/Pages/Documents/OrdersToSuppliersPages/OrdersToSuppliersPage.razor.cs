@@ -22,7 +22,7 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
 
         protected OrdersToSuppliers document;
         protected bool isLoad;
-        protected int selectedSupplier;
+        protected int selectedSupplier;        
         protected List<Supplier> suppliers;
         protected List<Material> materials;
         protected string selectedDate;
@@ -137,7 +137,22 @@ namespace Project.Pages.Documents.OrdersToSuppliersPages
                 }
                 selectedSupplier = parsSupplier;
                 materials = DatabaseProvider.GetMaterials(selectedSupplier);
+
                 StateHasChanged();
+            }
+        }
+
+        protected void Remove()
+        {
+            try
+            {
+                DatabaseProvider.RemoveOrdersToSuppliers(Id);
+                NavigationManager.NavigateTo("/orders-to-suppliers");
+                ShowMessage($"Документ успешно удален", Models.MessageType.Success);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
             }
         }
     }

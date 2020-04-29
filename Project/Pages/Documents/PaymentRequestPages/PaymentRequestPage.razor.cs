@@ -102,5 +102,19 @@ namespace Project.Pages.Documents.PaymentRequestPages
                 document.Sum = 0;
             }
         }
+
+        protected void Remove()
+        {
+            try
+            {
+                DatabaseProvider.RemoveOrdersToSuppliers(Id);
+                NavigationManager.NavigateTo("/payment-requests");
+                ShowMessage($"Документ успешно удален", Models.MessageType.Success);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
+            }
+        }
     }
 }

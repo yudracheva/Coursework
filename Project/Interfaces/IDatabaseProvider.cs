@@ -184,6 +184,13 @@ namespace Project.Interfaces
         /// </summary>
         /// <param name="id">ИДентификатор материала</param>
         void RemoveMaterial(int id);
+        
+        /// <summary>
+        /// Возвращает список доступного товара к приходу
+        /// </summary>
+        /// <param name="number">Номер заказа</param>
+        /// <returns></returns>
+        List<LineOfMaterials> GetAvailableOrderMaterial(int number);
 
         /// <summary>
         /// Сохраняет или обновляет категорию материала
@@ -221,5 +228,11 @@ namespace Project.Interfaces
         /// </summary>
         /// <returns>Список документа</returns>
         List<ActOfReceipt> GetActsOfReceipt();
+
+        /// <summary>
+        /// Возвращает список не закрытых заказов
+        /// </summary>
+        /// <returns></returns>
+        List<OrdersToSuppliers> GetAvailableOrders();
     }
 }

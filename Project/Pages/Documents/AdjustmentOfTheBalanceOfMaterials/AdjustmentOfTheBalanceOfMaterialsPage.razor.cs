@@ -14,12 +14,6 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
         [Parameter]
         public int Id { get; set; }
 
-        [Inject]
-        public IDatabaseProvider DatabaseProvider { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
         protected bool isLoad;
 
         protected CorrectionOfBalanceMaterials document;
@@ -33,7 +27,7 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
 
         protected void ChangeCount(ChangeEventArgs agrs, int numberLine)
         {
-            PageUtils.ChangeCount(agrs.Value, document.Materials, numberLine);
+            PageUtils.ChangeCount(agrs.Value, document.Materials, numberLine, false);
         }
 
         protected void AddLine()
@@ -85,12 +79,37 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
                 foreach (var item in document.Materials)
                 {
                     item.Material = materials.FirstOrDefault(d => d.Id == item.SelectedMaterial);
+
+                    if (item.Count == 0)
+                    {
+                        ShowMessage($"Невозможно сохранить документ, т.к. в строке {item.Number} не установлено количество.", Models.MessageType.Error);
+                        return;
+                    }
                 }
 
                 DatabaseProvider.SaveCorrectionOfBalanceMaterials(document);
                 NavigationManager.NavigateTo("/adjustment-of-the-balance-of-materials");
 
                 ShowMessage($"Документ успешно сохранен", Models.MessageType.Success);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
+            }
+        }
+
+        protected void Remove(int number)
+        {
+            PageUtils.RemoveLine(document.Materials, number);
+        }
+
+        protected void Remove()
+        {
+            try
+            {
+                DatabaseProvider.RemoveCorrectionOfBalanceMaterials(Id);
+                NavigationManager.NavigateTo("/adjustment-of-the-balance-of-materials");
+                ShowMessage($"Документ успешно удален", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
