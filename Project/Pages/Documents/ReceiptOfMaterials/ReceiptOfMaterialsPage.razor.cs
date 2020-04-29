@@ -114,10 +114,11 @@ namespace Project.Pages.Documents.ReceiptOfMaterials
 
                 DatabaseProvider.SaveActOfReceipt(document);
                 NavigationManager.NavigateTo("/receipt-of-materials");
+                ShowMessage($"Документ успешно сохранен", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
             }
         }
 

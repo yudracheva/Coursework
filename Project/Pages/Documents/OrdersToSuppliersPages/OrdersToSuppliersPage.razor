@@ -34,11 +34,25 @@
     <div class="form-group row">
         <label class="col-sm-3 col-form-label">Поставщик:</label>
         <div class="col-sm-9">
-            <select class="form-control form-control-sm" @bind="selectedSupplier">
-                <option value=0>@("<Пусто>")</option>
+            <select class="form-control form-control-sm" @onchange="ChangeSelectedSupplier">
+                @if (selectedSupplier == 0)
+                {
+                    <option selected value=0>@("<Пусто>")</option>
+                }
+                else
+                {
+                    <option value=0>@("<Пусто>")</option>
+                }
                 @foreach (var supplier in suppliers)
                 {
-                    <option value=@supplier.Id>@supplier.OrganizationName</option>
+                    @if (selectedSupplier == supplier.Id)
+                    {
+                        <option selected value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
+                    else
+                    {
+                        <option value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
                 }
             </select>
         </div>
@@ -56,8 +70,6 @@
                 <th style="width:10%">№</th>
                 <th>Материал</th>
                 <th style="width:15%">Количестно</th>
-                <th style="width:15%">Цена</th>
-                <th style="width:15%">Сумма</th>
                 <th style="width:15%"></th>
             </tr>
         </thead>
@@ -68,21 +80,29 @@
                     <th>@material.Number</th>
                     <th>
                         <select class="form-control form-control-sm" @bind="@material.SelectedMaterial">
-                            <option value=0>@("<Пусто>")</option>
+                            @if (material.SelectedMaterial == 0)
+                            {
+                                <option selected value=0>@("<Пусто>")</option>
+                            }
+                            else
+                            {
+                                <option value=0>@("<Пусто>")</option>
+                            }
                             @foreach (var materialForList in materials)
                             {
-                                <option value=@materialForList.Id>@materialForList.Name</option>
+                                @if (material.SelectedMaterial == materialForList.Id)
+                                {
+                                    <option selected value=@materialForList.Id>@materialForList.Name</option>
+                                }
+                                else
+                                {
+                                    <option value=@materialForList.Id>@materialForList.Name</option>
+                                }
                             }
                         </select>
                     </th>
                     <th>
                         <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeCount(agrs, material.Number))" value="@material.Count" min="0" />
-                    </th>
-                    <th>
-                        <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangePrice(agrs, material.Number))" step="0.01" value="@material.Price.ToString().Replace(',','.')" min="0" />
-                    </th>
-                    <th>
-                        <input type="number" class="form-control form-control-sm" @onchange="((ChangeEventArgs agrs) => ChangeSum(agrs, material.Number))" step="0.01" value="@material.Sum.ToString().Replace(',','.')" min="0" />
                     </th>
                     <th>
                         <div class="row float-right">

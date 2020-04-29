@@ -5,16 +5,10 @@ using System;
 
 namespace Project.Pages.ReferenceInformation.MaterialCategories
 {
-    public class BankPageIndex : ComponentBase
+    public class BankPageIndex : DefaultComponentBase
     {
         [Parameter]
         public int Id { get; set; }
-
-        [Inject]
-        public IDatabaseProvider DatabaseProvider { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
 
         protected Bank bank;
 
@@ -24,7 +18,7 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (true)
+            if (firstRender)
             {
                 isLoad = false;
 
@@ -58,10 +52,11 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
             {
                 DatabaseProvider.SaveBank(bank);
                 NavigationManager.NavigateTo("/banks");
+                ShowMessage($"Банк успешно сохранен", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                // TODO: Добавить обработку исключения
+                ShowMessage($"Не удалось сохранить. {ex.Message}", Models.MessageType.Error);
             }
         }
     }

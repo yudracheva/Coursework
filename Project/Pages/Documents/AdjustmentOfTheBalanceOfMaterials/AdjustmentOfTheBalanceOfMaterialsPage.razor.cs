@@ -89,10 +89,12 @@ namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
 
                 DatabaseProvider.SaveCorrectionOfBalanceMaterials(document);
                 NavigationManager.NavigateTo("/adjustment-of-the-balance-of-materials");
+
+                ShowMessage($"Документ успешно сохранен", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
             }
         }
     }

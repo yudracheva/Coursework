@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Project.Pages.ReferenceInformation.Suppliers
 {
-    public class SupplierPageIndex : ComponentBase
+    public class SupplierPageIndex : DefaultComponentBase
     {
         [Parameter]
         public int Id { get; set; }
@@ -77,10 +77,11 @@ namespace Project.Pages.ReferenceInformation.Suppliers
 
                 DatabaseProvider.SaveSupplier(supplier);
                 NavigationManager.NavigateTo("/suppliers");
+                ShowMessage($"Поставщик успешно сохранен", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+                ShowMessage($"Не удалось сохранить. {ex.Message}", Models.MessageType.Error);
             }
         }
 

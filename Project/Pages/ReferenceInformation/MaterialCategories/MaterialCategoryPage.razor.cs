@@ -5,7 +5,7 @@ using System;
 
 namespace Project.Pages.ReferenceInformation.MaterialCategories
 {
-    public class MaterialCategoriesPageIndex : ComponentBase
+    public class MaterialCategoriesPageIndex : DefaultComponentBase
     {
         [Parameter]
         public int Id { get; set; }
@@ -58,10 +58,11 @@ namespace Project.Pages.ReferenceInformation.MaterialCategories
             {
                 DatabaseProvider.SaveMaterialCategory(materialCategory);
                 NavigationManager.NavigateTo("/material-categories");
+                ShowMessage($"Категория успешно сохранена", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+                ShowMessage($"Не удалось сохранить. {ex.Message}", Models.MessageType.Error);
             }
         }
     }

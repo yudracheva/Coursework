@@ -8,13 +8,16 @@
     {
         <h3>Поставщик @GetDescription()</h3>
 
-        <div class="border-bottom border-top">
-            <div class="row">
-                <div class="col">
-                    <a href="/report-receipt-materials-by-suppliers/@supplier.Id">Отчет по поступлении материалов</a>
+        @if (supplier.Id != 0)
+        {
+            <div class="border-bottom border-top">
+                <div class="row">
+                    <div class="col">
+                        <a href="/report-receipt-materials-by-suppliers/@supplier.Id">Отчет по поступлении материалов</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
 
         <form>
             @if (supplier.Id != 0)

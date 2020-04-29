@@ -194,7 +194,7 @@ namespace Project.Providers
                             on m.SUPPLIER = s.ID
                      left join MATERIALS_CATEGORIES c
                             on m.Category = c.ID
-                        where ((@supplierId != 0 and m.SUPPLIER = @supplierId)
+                        where ((@supplierId != 0 and m.SUPPLIER = @supplierId and m.DELIVERIES_STOPED = 0)
                            or (@supplierId = 0))";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
@@ -1062,13 +1062,15 @@ namespace Project.Providers
             var sql = @"select NUMBER,
                                DATE,
                                SUPPLIER 
-                          from ORDERS_TO_SUPPLIERS";
+                          from ORDERS_TO_SUPPLIERS
+                         where NUMBER = @Number";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
                 con.Open();
 
                 using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@Number", id);
                 using var dbReader = cmd.ExecuteReader();
                 if (dbReader.Read())
                 {
@@ -1096,9 +1098,7 @@ namespace Project.Providers
             var lines = new List<LineOfMaterials>();
 
             var sql = @"select NUMBER,
-                               PRICE,
                                COUNT,
-                               SUM,
                                MATERIAL
                           from ORDERS_TO_SUPPLIERS_LINES
                          where DOCUMENT_NUMBER = @DocumentNumber";
@@ -1116,8 +1116,6 @@ namespace Project.Providers
                     var line = new LineOfMaterials()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        Price = dbReader.GetDecimal("PRICE"),
-                        Sum = dbReader.GetDecimal("SUM"),
                         Count = dbReader.GetInt("COUNT"),
                         SelectedMaterial = dbReader.GetInt("MATERIAL")
                     };
@@ -1325,12 +1323,12 @@ namespace Project.Providers
         {
             var id = document.Number;
             if (id == 0)
-                id = GetGenNumber_CorrectionOfBalanceMaterials();
+                id = GetGenNumber_OrderToSupplier();
 
             using var con = new SQLiteConnection(_settingsProvider.ConnectionString);
 
             // Очистим все строки, а потом добавим
-            var sql = @"delete from CORRECTION_OF_BALANCES_LINES where DOCUMENT_NUMBER = @Id";
+            var sql = @"delete from ORDERS_TO_SUPPLIERS_LINES where DOCUMENT_NUMBER = @Id";
 
             con.Open();
 
@@ -1341,18 +1339,19 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into CORRECTION_OF_BALANCES (Number, Date)
-                                                         values (@DocumentNumber, @DocumentDate)";
+            sql = @"insert or replace into ORDERS_TO_SUPPLIERS (NUMBER, DATE, SUPPLIER)
+                                                         values (@DocumentNumber, @DocumentDate, @Supplier)";
 
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
                 cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+                cmd.AddParameter("@Supplier", document.Supplier.Id);
 
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into CORRECTION_OF_BALANCES_LINES (DOCUMENT_NUMBER, NUMBER, MATERIAL, COUNT)
+            sql = @"insert or replace into ORDERS_TO_SUPPLIERS_LINES (DOCUMENT_NUMBER, NUMBER, MATERIAL, COUNT)
                                                               values (@DocumentNumber, @Number,  @Material, @Count)";
 
             foreach (var item in document.Materials)
@@ -1367,6 +1366,30 @@ namespace Project.Providers
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        private int GetGenNumber_OrderToSupplier()
+        {
+            var sql = @"select max(Number) as ID from ORDERS_TO_SUPPLIERS";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using (var cmd = new SQLiteCommand(sql, con))
+                {
+                    using (var dbReader = cmd.ExecuteReader())
+                    {
+                        if (dbReader.Read())
+                        {
+                            var result = dbReader.GetInt("ID");
+                            return result + 1;
+                        }
+                    }
+                }
+            }
+
+            return 1;
         }
 
         public List<ReportReceiptMaterialsBySupplier> GetReportReceiptMaterialsBySupplier()

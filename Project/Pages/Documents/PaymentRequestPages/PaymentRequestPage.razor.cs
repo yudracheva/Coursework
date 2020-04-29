@@ -75,10 +75,11 @@ namespace Project.Pages.Documents.PaymentRequestPages
 
                 DatabaseProvider.SavePaymentRequest(document);
                 NavigationManager.NavigateTo("/payment-requests");
+                ShowMessage($"Документ успешно сохранен", Models.MessageType.Success);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось сохранить. {ex.Message}");
+                ShowMessage($"Не удалось сохранить документ. {ex.Message}", Models.MessageType.Error);
             }
         }
 
