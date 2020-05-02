@@ -1064,7 +1064,7 @@ namespace Project.Providers
                         paymentRequest.Supplier = GetSupplier(supplier);
 
                     var act = dbReader.GetInt("RECEIPT");
-                    if (act != null)
+                    if (act != 0)
                         paymentRequest.Act = GetActOfReceipt(act);
 
                     return paymentRequest;

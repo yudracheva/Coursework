@@ -11,6 +11,8 @@ namespace Project.Pages.Reports
     {
         public const string DATE_TO_PAGE_STRING_FORMAT = "yyyy-MM-ddTHH:mm";
 
+        public const string DATE_TO_PAGE_TO_SHOW = "dd.MM.yyyy HH:mm";
+
         protected bool isLoad;
     }
 }
