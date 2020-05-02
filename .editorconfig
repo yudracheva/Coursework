@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS2001: Не удалось найти исходный файл "D:\YandexDisk\YandexDisk\Учеба\Учеба КГТУ\6 семестр\Базы данных\Работа\Курсовая работа\Project\Project\Project\obj\x64\Debug\netcoreapp3.1\RazorDeclaration\Pages\Reports\ReferencesAboutPaymentsWithSuppliers\ReferencesAboutPaymentsWithSuppliersPageViewer.razor.g.cs".
+dotnet_diagnostic.CS2001.severity = none

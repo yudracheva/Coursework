@@ -5,6 +5,7 @@ using Project.Models.Reports;
 using Project.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 
 namespace Project.Providers
@@ -552,13 +553,13 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into RECEIPT_OF_MATERIALS (Number, Date, Supplier, SUP_ORDER)
+            sql = @"insert or replace into RECEIPT_OF_MATERIALS (Number, DOCUMENT_DATE, Supplier, SUP_ORDER)
                                                          values (@DocumentNumber, @DocumentDate, @Supplier, @Order)";
 
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
-                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+                cmd.AddParameter("@DocumentDate", GetDate(document.CreatedDate));
                 cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
                 cmd.AddParameter("@Order", document.Order?.Number ?? 0);
 
@@ -618,7 +619,7 @@ namespace Project.Providers
         public ActOfReceipt GetActOfReceipt(int id)
         {
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER, 
                                SUP_ORDER as SUP_ORDER
                           from RECEIPT_OF_MATERIALS
@@ -638,7 +639,7 @@ namespace Project.Providers
                     var actOfReceipt = new ActOfReceipt()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        CreatedDate = dbReader.GetDateTime("DATE")
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE"))
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -704,7 +705,7 @@ namespace Project.Providers
             var result = new List<ActOfReceipt>();
 
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER 
                           from RECEIPT_OF_MATERIALS";
 
@@ -719,7 +720,7 @@ namespace Project.Providers
                     var actOfReceipt = new ActOfReceipt()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        CreatedDate = dbReader.GetDateTime("DATE")
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE"))
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -817,7 +818,7 @@ namespace Project.Providers
             var result = new List<OrdersToSuppliers>();
 
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER 
                           from ORDERS_TO_SUPPLIERS";
 
@@ -832,7 +833,7 @@ namespace Project.Providers
                     var ordersToSuppliers = new OrdersToSuppliers()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        CreatedDate = dbReader.GetDateTime("DATE")
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE"))
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -866,7 +867,7 @@ namespace Project.Providers
                 {
                     var correctionOfBalanceMaterials = new CorrectionOfBalanceMaterials()
                     {
-                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         Number = dbReader.GetInt("NUMBER")
                     };
 
@@ -882,7 +883,7 @@ namespace Project.Providers
             var result = new List<PaymentRequest>();
 
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER,
                                SUM
                           from PAYMENT_REQUEST";
@@ -897,7 +898,7 @@ namespace Project.Providers
                 {
                     var material = new PaymentRequest()
                     {
-                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         Number = dbReader.GetInt("NUMBER"),
                         Sum = dbReader.GetDecimal("SUM")
                     };
@@ -1036,7 +1037,7 @@ namespace Project.Providers
         public PaymentRequest GetPaymentRequest(int id)
         {
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER,
                                SUM, 
                                RECEIPT 
@@ -1054,7 +1055,7 @@ namespace Project.Providers
                 {
                     var paymentRequest = new PaymentRequest()
                     {
-                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         Number = dbReader.GetInt("NUMBER"),
                         Sum = dbReader.GetDecimal("SUM")
                     };
@@ -1077,7 +1078,7 @@ namespace Project.Providers
         public OrdersToSuppliers GetOrderToSupplier(int id)
         {
             var sql = @"select NUMBER,
-                               DATE,
+                               DOCUMENT_DATE,
                                SUPPLIER 
                           from ORDERS_TO_SUPPLIERS
                          where NUMBER = @Number";
@@ -1094,7 +1095,7 @@ namespace Project.Providers
                     var actOfReceipt = new OrdersToSuppliers()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        CreatedDate = dbReader.GetDateTime("DATE")
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE"))
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -1165,7 +1166,7 @@ namespace Project.Providers
                 {
                     var correctionOfBalanceMaterials = new CorrectionOfBalanceMaterials()
                     {
-                        CreatedDate = dbReader.GetDateTimeOrMin("DATE"),
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         Number = dbReader.GetInt("NUMBER")
                     };
 
@@ -1241,7 +1242,7 @@ namespace Project.Providers
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
-                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+                cmd.AddParameter("@DocumentDate", GetDate(document.CreatedDate));
 
                 cmd.ExecuteNonQuery();
             }
@@ -1293,8 +1294,8 @@ namespace Project.Providers
             if (id == 0)
                 id = GetGenNumber_PaymentRequest();
 
-            var sql = @"insert or replace into PAYMENT_REQUEST (NUMBER, DATE, SUM, SUPPLIER, RECEIPT)
-                                  values (@Id, @DATE, @SUM, @Supplier, @Receipt)";
+            var sql = @"insert or replace into PAYMENT_REQUEST (NUMBER, DOCUMENT_DATE, SUM, SUPPLIER, RECEIPT)
+                                  values (@Id, @DocumentDate, @SUM, @Supplier, @Receipt)";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
             {
@@ -1303,7 +1304,7 @@ namespace Project.Providers
                 using (var cmd = new SQLiteCommand(sql, con))
                 {
                     cmd.AddParameter("@Id", id);
-                    cmd.AddParameter("@DATE", document.CreatedDate.ToString(DATE_STRING));
+                    cmd.AddParameter("@DocumentDate", GetDate(document.CreatedDate));
                     cmd.AddParameter("@SUM", document.Sum);
                     cmd.AddParameter("@Supplier", document.Supplier?.Id ?? 0);
                     cmd.AddParameter("@Receipt", document.Act?.Number ?? 0);
@@ -1357,13 +1358,13 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into ORDERS_TO_SUPPLIERS (NUMBER, DATE, SUPPLIER)
+            sql = @"insert or replace into ORDERS_TO_SUPPLIERS (NUMBER, DOCUMENT_DATE, SUPPLIER)
                                                          values (@DocumentNumber, @DocumentDate, @Supplier)";
 
             using (var cmd = new SQLiteCommand(sql, con))
             {
                 cmd.AddParameter("@DocumentNumber", id);
-                cmd.AddParameter("@DocumentDate", document.CreatedDate.ToString(DATE_STRING));
+                cmd.AddParameter("@DocumentDate", GetDate(document.CreatedDate));
                 cmd.AddParameter("@Supplier", document.Supplier.Id);
 
                 cmd.ExecuteNonQuery();
@@ -1415,7 +1416,7 @@ namespace Project.Providers
             var result = new List<ReportReceiptMaterialsBySupplier>();
 
             var sql = @"select r.NUMBER, 
-                               r.DATE, 
+                               r.DOCUMENT_DATE, 
                                r.SUPPLIER, 
                                l.MATERIAL, 
                                l.COUNT 
@@ -1434,7 +1435,7 @@ namespace Project.Providers
                     var line = new ReportReceiptMaterialsBySupplier()
                     {
                         Count = dbReader.GetInt("COUNT"),
-                        DocumentDate = dbReader.GetDateTime("DATE"),
+                        DocumentDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         DocumentNumber = dbReader.GetInt("NUMBER")
                     };
 
@@ -1458,7 +1459,7 @@ namespace Project.Providers
             var result = new List<ReportListsOfMaterialsOnTheWay>();
 
             var sql = @"select ord.NUMBER, 
-                               ord.DATE, 
+                               ord.DOCUMENT_DATE, 
                                ord.SUPPLIER,
 							   mat.MATERIAL,
 							   mat.REMAINED_COUNT
@@ -1496,7 +1497,7 @@ namespace Project.Providers
                     var ordersToSuppliers = new ReportListsOfMaterialsOnTheWay()
                     {
                         DocumentNumber = dbReader.GetInt("NUMBER"),
-                        DocumentDate = dbReader.GetDateTime("DATE"),
+                        DocumentDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
                         SelectedSupplier = dbReader.GetInt("SUPPLIER"),
                         SelectedMaterial = dbReader.GetInt("MATERIAL"),
                         Count = dbReader.GetInt("REMAINED_COUNT"),
@@ -1522,7 +1523,7 @@ namespace Project.Providers
             var result = new List<OrdersToSuppliers>();
 
             var sql = @"select ord.NUMBER, 
-                               ord.DATE, 
+                               ord.DOCUMENT_DATE, 
                                ord.SUPPLIER 
                           from ORDERS_TO_SUPPLIERS ord 
                     inner join (select o.DOCUMENT_NUMBER as DOCUMENT_NUMBER, 
@@ -1547,7 +1548,7 @@ namespace Project.Providers
 	                                     where REMAINED_COUNT > 0) mat
 	                                        on mat.DOCUMENT_NUMBER = ord.NUMBER 
                                       group by ord.NUMBER, 
-                                               ord.DATE, 
+                                               ord.DOCUMENT_DATE, 
                                                ord.SUPPLIER";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
@@ -1561,7 +1562,7 @@ namespace Project.Providers
                     var ordersToSuppliers = new OrdersToSuppliers()
                     {
                         Number = dbReader.GetInt("NUMBER"),
-                        CreatedDate = dbReader.GetDateTime("DATE")
+                        CreatedDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE"))
                     };
 
                     var supplier = dbReader.GetInt("SUPPLIER");
@@ -1628,6 +1629,92 @@ namespace Project.Providers
             }
 
             return lines;
+        }
+
+        public List<ReferencesAboutPaymentsLine> GetReferencesAboutPaymentsInfo(int supplierId, DateTime beginDate, DateTime endDate)
+        {
+            var result = new List<ReferencesAboutPaymentsLine>();
+
+            var sql = @"select rm.NUMBER as DOCUMENT_NUMBER, 
+	                           rm.DOCUMENT_DATE as DOCUMENT_DATE, 
+	                           rm.SUPPLIER as SUPPLIER,
+	                           rml.SUM_SUM as CREDIT,
+                               0 as DEBIT,
+	                           " + "\"Акт о приемке материалов\"" + @" as DOCUMENT_NAME,
+							   null as ABOUT
+                          from RECEIPT_OF_MATERIALS rm
+                     left join (select SUM(SUM) as SUM_SUM, 
+				                       DOCUMENT_NUMBER
+                                  from RECEIPT_OF_MATERIALS_LINES ln
+                              group by DOCUMENT_NUMBER) rml
+                            on rm.Number = rml.DOCUMENT_NUMBER
+                         where rm.SUPPLIER = @supplier
+                           and rm.DOCUMENT_DATE >= @beginDate
+                           and rm.DOCUMENT_DATE <= @endDate
+                     union all
+                        select pr.NUMBER as DOCUMENT_NUMBER, 
+	                           pr.DOCUMENT_DATE as DOCUMENT_DATE, 
+	                           pr.SUPPLIER as SUPPLIER, 
+                               0 as CREDIT,
+                               pr.SUM as DEBIT,
+	                           " + "\"Платежное требование\"" + @"  as DOCUMENT_NAME,
+                               pr.RECEIPT as ABOUT
+                          from PAYMENT_REQUEST pr
+						  where pr.SUPPLIER = @supplier
+                           and pr.DOCUMENT_DATE >= @beginDate
+                           and pr.DOCUMENT_DATE <= @endDate";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                cmd.AddParameter("@supplier", supplierId);
+                cmd.AddParameter("@beginDate", GetDate(beginDate));
+                cmd.AddParameter("@endDate", GetDate(endDate));
+
+                using var dbReader = cmd.ExecuteReader();
+
+                var numberLine = 1;
+                while (dbReader.Read())
+                {
+                    var line = new ReferencesAboutPaymentsLine()
+                    {
+                        Number = numberLine,
+                        DocumentDate = GetDate(dbReader.GetDouble("DOCUMENT_DATE")),
+                        DocumentName = dbReader.GetString("DOCUMENT_NAME"),
+                        DocumentNumber = dbReader.GetInt("DOCUMENT_NUMBER"),
+                        DebitSum = dbReader.GetDecimal("DEBIT"),
+                        CreditSum = dbReader.GetDecimal("CREDIT"),
+                    };
+
+                    line.Supplier = GetSupplier(dbReader.GetInt("SUPPLIER"));
+                    if (line.DebitSum > 0)
+                    {
+                        var receipt = GetActOfReceipt(dbReader.GetInt("ABOUT"));
+                        line.OutstandingBalanceAbout = "За материалы";
+                        line.OutstandingBalanceDate = receipt.CreatedDate;
+                    }
+
+                    numberLine += 1;
+
+                    result.Add(line);
+                }
+            }
+
+            return result;
+        }
+
+        private double GetDate(DateTime date)
+        {
+            var timeSnap = new TimeSpan(date.Ticks);
+            return timeSnap.TotalSeconds;
+        }
+
+        private DateTime GetDate(double date)
+        {
+            var timeSnap = TimeSpan.FromSeconds(date);
+            return new DateTime(timeSnap.Ticks);
         }
     }
 }

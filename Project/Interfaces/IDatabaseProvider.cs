@@ -1,6 +1,7 @@
 ﻿using Project.Models.Documents;
 using Project.Models.ReferenceInformation;
 using Project.Models.Reports;
+using System;
 using System.Collections.Generic;
 
 namespace Project.Interfaces
@@ -23,6 +24,15 @@ namespace Project.Interfaces
         /// <returns>Список всех материалов</returns>
         List<Material> GetMaterials(int supplierId = 0, bool deliveriesStopped = false);
         
+        /// <summary>
+        /// Возращает строки для справки по расчетам с поставщиком
+        /// </summary>
+        /// <param name="supplierId">ИДентификатор поставщика</param>
+        /// <param name="beginDate">Дата начала</param>
+        /// <param name="endDate">Дата окончания</param>
+        /// <returns></returns>
+        List<ReferencesAboutPaymentsLine> GetReferencesAboutPaymentsInfo(int supplierId, DateTime beginDate, DateTime endDate);
+
         /// <summary>
         /// Удялет документ "Корректировку остатков" по номеру
         /// </summary>

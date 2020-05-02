@@ -42,7 +42,7 @@
                             <a href="/orders-to-suppliers/@document.Number.ToString("0")">@document.Number</a>
                         </td>
                         <td>
-                            @document.CreatedDate.ToLongDateString()
+                            @document.CreatedDate.ToString("dd.MM.yyyy HH:mm")
                         </td>
                         <td>
                             @if (!String.IsNullOrEmpty(document?.Supplier?.OrganizationName))
