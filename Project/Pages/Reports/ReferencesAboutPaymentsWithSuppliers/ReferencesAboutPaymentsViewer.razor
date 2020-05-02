@@ -1,7 +1,6 @@
 ﻿@page "/references-about-payments-viewer/{supplierId:int}/{beginDate:datetime}/{endDate:datetime}"
 @layout EmptyLayout
-@inherits DefaultComponentBase
-@*@inherits ReferencesAboutPaymentsViewerIndex*@
+@inherits ReportsComponent
 
 @if (isLoad)
 {
@@ -137,7 +136,7 @@
                     </div>
                     <div class="col-2">
                         <div class="row col border-bottom">
-                            <p class="text-center w-100 m-0"></p>
+                            <p class="text-center w-100 m-0">&nbsp;</p>
                         </div>
                         <div class="row col p-0">
                             <p class="text-center w-100 m-0" style="font-size: 10px">(подпись)</p>
