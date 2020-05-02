@@ -1,4 +1,5 @@
 ﻿@page "/lists-of-materials-on-the-way"
+@page "/lists-of-materials-on-the-way/{MaterialId}"
 
 @inherits ReportsComponent
 
@@ -48,7 +49,13 @@
     <div class="row" style="background-color: #0f4043;color: white;text-align: center;vertical-align: middle;">
         <div class="col">
             <div class="row">
-                <div class="col-6 border">
+                <div class="col-4 border">
+                    Поставщик
+                </div>
+                <div class="col-2 border">
+                    Номер заказа
+                </div>
+                <div class="col-4 border">
                     Материал
                 </div>
                 <div class="col-2 border">
@@ -62,14 +69,23 @@
     <div class="row">
         <div class="col">
             @if (materials != null && lines != null)
-            { 
-                @foreach (var material in materials)
+            {
+                @foreach (var line in lines)
                 {
-                    var materialsToView = lines.Where(d => d.Material.Id == material.Id).ToList();
-                    if (materialsToView.Count != 0)
-                    {
-                        <MaterialComponent Materials="materialsToView" />
-                    }
+                    <div class="row">
+                        <div class="col-4 border">
+                            @line.Supplier?.OrganizationName
+                        </div>
+                        <div class="col-2 border">
+                            @line.DocumentNumber
+                        </div>
+                        <div class="col-4 border">
+                            @line.Material.Name
+                        </div>
+                        <div class="col-2 border">
+                            @line.Count
+                        </div>
+                    </div>
                 }
             }
         </div>

@@ -5,6 +5,8 @@ namespace Project.Models.Reports
 {
     public class ReportListsOfMaterialsOnTheWay
     {
+        public int SelectedMaterial { get; set; }
+
         public Material Material { get; set; }
 
         public int Count { get; set; }
@@ -12,5 +14,9 @@ namespace Project.Models.Reports
         public DateTime DocumentDate { get; set; }
 
         public int DocumentNumber { get; set; }
+
+        public Supplier Supplier { get; internal set; }
+
+        public int SelectedSupplier { get; internal set; }
     }
 }

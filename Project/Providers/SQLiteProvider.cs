@@ -1455,7 +1455,66 @@ namespace Project.Providers
 
         public List<ReportListsOfMaterialsOnTheWay> GetReportListsOfMaterialsOnTheWay()
         {
-            throw new NotImplementedException();
+            var result = new List<ReportListsOfMaterialsOnTheWay>();
+
+            var sql = @"select ord.NUMBER, 
+                               ord.DATE, 
+                               ord.SUPPLIER,
+							   mat.MATERIAL,
+							   mat.REMAINED_COUNT
+                          from ORDERS_TO_SUPPLIERS ord 
+                    inner join (select o.DOCUMENT_NUMBER as DOCUMENT_NUMBER, 
+		                               o.MATERIAL, 
+		                               o.COUNT - 
+                                         (CASE when rp.ARRIVED_COUNT is null 
+                                               then 0 
+                                               else rp.ARRIVED_COUNT
+                                          end) as REMAINED_COUNT
+	                              from ORDERS_TO_SUPPLIERS_LINES o 
+                             left join (select r.NUMBER as RECEIPT_OF_MATERIALS_NUMBER, 
+				                               r.SUP_ORDER as ORDER_TO_SUPPLIERS, 
+				                               rl.MATERIAL as MATERIAL, 
+				                               COUNT(rl.COUNT) as ARRIVED_COUNT 
+		                                  from RECEIPT_OF_MATERIALS r 
+	                                 left join RECEIPT_OF_MATERIALS_LINES rl 
+		                              group by r.NUMBER, 
+		                                       r.SUP_ORDER, 
+				                               rl.MATERIAL) rp
+                                            on o.DOCUMENT_NUMBER = rp.ORDER_TO_SUPPLIERS 
+	                                       and rp.MATERIAL = o.MATERIAL
+	                                     where REMAINED_COUNT > 0) mat
+	                                        on mat.DOCUMENT_NUMBER = ord.NUMBER ";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+                using var dbReader = cmd.ExecuteReader();
+                while (dbReader.Read())
+                {
+                    var ordersToSuppliers = new ReportListsOfMaterialsOnTheWay()
+                    {
+                        DocumentNumber = dbReader.GetInt("NUMBER"),
+                        DocumentDate = dbReader.GetDateTime("DATE"),
+                        SelectedSupplier = dbReader.GetInt("SUPPLIER"),
+                        SelectedMaterial = dbReader.GetInt("MATERIAL"),
+                        Count = dbReader.GetInt("REMAINED_COUNT"),
+                    };
+
+                    var supplier = dbReader.GetInt("SUPPLIER");
+                    if (supplier != 0)
+                        ordersToSuppliers.Supplier = GetSupplier(supplier);
+
+                    var material = dbReader.GetInt("MATERIAL");
+                    if (material != 0)
+                        ordersToSuppliers.Material = GetMaterial(material);
+
+                    result.Add(ordersToSuppliers);
+                }
+            }
+
+            return result;
         }
 
         public List<OrdersToSuppliers> GetAvailableOrders()

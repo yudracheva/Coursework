@@ -1,3 +1,95 @@
 ﻿@page "/reports-on-payments-by-supplier"
+@inherits ReportsComponent
 
 <h3>Отчет по платежам по поставщикам</h3>
+
+@if (isLoad)
+{
+    <div class="row pb-1">
+        <div class="col pl-0">
+            <lable>Поставщик:</lable>
+            <select class="form-control form-control-sm" @onchange="ChangeSelectedSupplier">
+                @if (selectedSupplier == 0)
+                {
+                    <option selected value=0>@("<Все>")</option>
+                }
+                else
+                {
+                    <option value=0>@("<Все>")</option>
+                }
+
+                @foreach (var supplier in suppliers)
+                {
+                    if (selectedSupplier == supplier.Id)
+                    {
+                        <option selected value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
+                    else
+                    {
+                        <option value=@supplier.Id>@supplier.OrganizationName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col pl-0">
+            <lable>Дата начала:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedBeginDate" @onchange="ChangeBeginDate" />
+        </div>
+        <div class="col pl-0">
+            <lable>Дата окончания:</lable>
+            <input type="datetime-local" format-value=@DATE_TO_PAGE_STRING_FORMAT class="form-control form-control-sm" value="@selectedEndDate" @onchange="ChangeEndDate" />
+        </div>
+        <div class="col pl-0">
+            <button class="btn btn-sm btn-outline-secondary w-100 mt-4" onclick="printData();">Печать</button>
+        </div>
+    </div>
+
+    <div class="row" style="background-color: #0f4043;color: white;text-align: center;vertical-align: middle;">
+        <div class="col">
+            <div class="row">
+                <div class="col-6 border">
+                    Поставщик
+                </div>
+                <div class="col-2 border">
+                    Номер
+                </div>
+                <div class="col-2 border">
+                    Дата документа
+                </div>
+                <div class="col-2 border">
+                    Сумма
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            @if (suppliers != null && lines != null)
+            {
+                @foreach (var line in lines)
+                {
+                    <div class="row">
+                        <div class="col-6 border">
+                            @line.Supplier?.OrganizationName
+                        </div>
+                        <div class="col-2 border">
+                            @line.Number
+                        </div>
+                        <div class="col-2 border">
+                            @line.CreatedDate
+                        </div>
+                        <div class="col-2 border">
+                            @line.Sum
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <LoadComponent />
+}
