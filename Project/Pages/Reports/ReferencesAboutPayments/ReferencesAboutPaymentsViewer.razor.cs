@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Project.Pages.Reports.ReferencesAboutPaymentsWithSuppliers
+namespace Project.Pages.Reports.ReferencesAboutPayments
 {
     public partial class ReferencesAboutPaymentsViewer
     {

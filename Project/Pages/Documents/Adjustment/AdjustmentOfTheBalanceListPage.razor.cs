@@ -3,9 +3,9 @@ using Project.Interfaces;
 using Project.Models.Documents;
 using System.Collections.Generic;
 
-namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
+namespace Project.Pages.Documents.Adjustment
 {
-    public partial class AdjustmentOfTheBalanceOfMaterialsListPage
+    public partial class AdjustmentOfTheBalanceListPage
     {
         [Inject]
         public IDatabaseProvider DatabaseProvider { get; set; }

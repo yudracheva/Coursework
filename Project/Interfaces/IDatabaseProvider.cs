@@ -25,6 +25,12 @@ namespace Project.Interfaces
         List<Material> GetMaterials(int supplierId = 0, bool deliveriesStopped = false);
         
         /// <summary>
+        /// Возвращает список неоплаченных материалов
+        /// </summary>
+        /// <returns></returns>
+        List<LineOfMaterials> GetNotPaymedActsOfReceipt();
+
+        /// <summary>
         /// Возращает строки для справки по расчетам с поставщиком
         /// </summary>
         /// <param name="supplierId">ИДентификатор поставщика</param>

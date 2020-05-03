@@ -25,6 +25,10 @@ namespace Project
             services.AddTransient<IDatabaseProvider, SQLiteProvider>();
             services.AddSingleton<SettingsProvider>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AutomaticAuthentication = false;
+            });
 
             services.PostConfigure<AppSettings>(settings =>
             {

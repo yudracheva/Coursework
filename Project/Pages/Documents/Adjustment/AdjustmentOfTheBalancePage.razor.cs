@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Project.Pages.Documents.AdjustmentOfTheBalanceOfMaterials
+namespace Project.Pages.Documents.Adjustment
 {
-    public partial class AdjustmentOfTheBalanceOfMaterialsPage
+    public partial class AdjustmentOfTheBalancePage
     {
         [Parameter]
         public int Id { get; set; }

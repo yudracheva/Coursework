@@ -1,17 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Project.Interfaces;
+using Project.Models.ReferenceInformation;
+using Project.Models.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Project.Models.ReferenceInformation;
-using Project.Models.Documents;
-using Project.Models.Reports;
-using NLog.Filters;
 
-namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
+namespace Project.Pages.Reports.ReportReceiptBySuppliers
 {
-    public partial class ReportReceiptMaterialsBySuppliersPage
+    public partial class ReportReceiptMaterialsPage
     {
         [Parameter]
         public int SupplierId { get; set; }

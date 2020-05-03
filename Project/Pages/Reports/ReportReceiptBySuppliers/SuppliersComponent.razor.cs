@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project.Pages.Reports.ReportReceiptMaterialsBySuppliers
+namespace Project.Pages.Reports.ReportReceiptBySuppliers
 {
     public partial class SuppliersComponent
     {

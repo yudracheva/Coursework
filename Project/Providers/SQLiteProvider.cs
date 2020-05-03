@@ -1716,5 +1716,43 @@ namespace Project.Providers
             var timeSnap = TimeSpan.FromSeconds(date);
             return new DateTime(timeSnap.Ticks);
         }
+
+        public List<LineOfMaterials> GetNotPaymedActsOfReceipt()
+        {
+            var result = new List<LineOfMaterials>();
+
+            var sql = @"select rm.MATERIAL, 
+	                           SUM(rm.COUNT) as ALL_COUNT,
+	                           SUM(rm.SUM) as ALL_SUM
+                          from RECEIPT_OF_MATERIALS_LINES rm 
+                         where not rm.DOCUMENT_NUMBER in (select receipt from PAYMENT_REQUEST)
+                         group by rm.MATERIAL";
+
+            using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
+            {
+                con.Open();
+
+                using var cmd = new SQLiteCommand(sql, con);
+
+                using var dbReader = cmd.ExecuteReader();
+
+                while (dbReader.Read())
+                {
+                    var line = new LineOfMaterials()
+                    {
+                        Count = dbReader.GetInt("ALL_COUNT"),
+                        Sum = dbReader.GetDecimal("ALL_SUM")
+                    };
+
+                    var material = dbReader.GetInt("MATERIAL");
+                    if (material != 0)
+                        line.Material = GetMaterial(material);
+
+                    result.Add(line);
+                }
+            }
+
+            return result;
+        }
     }
 }
