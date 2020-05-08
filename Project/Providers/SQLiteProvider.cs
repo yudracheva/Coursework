@@ -854,7 +854,7 @@ namespace Project.Providers
             var result = new List<CorrectionOfBalanceMaterials>();
 
             var sql = @"select NUMBER,
-                               DATE
+                               DOCUMENT_DATE
                           from CORRECTION_OF_BALANCES";
 
             using (var con = new SQLiteConnection(_settingsProvider.ConnectionString))
@@ -1151,7 +1151,7 @@ namespace Project.Providers
         public CorrectionOfBalanceMaterials GetCorrectionOfBalanceMaterials(int id)
         {
             var sql = @"select NUMBER,
-                               DATE
+                               DOCUMENT_DATE
                           from CORRECTION_OF_BALANCES
                          where NUMBER = @Id";
 
@@ -1236,7 +1236,7 @@ namespace Project.Providers
                 cmd.ExecuteNonQuery();
             }
 
-            sql = @"insert or replace into CORRECTION_OF_BALANCES (Number, Date)
+            sql = @"insert or replace into CORRECTION_OF_BALANCES (Number, DOCUMENT_DATE)
                                                          values (@DocumentNumber, @DocumentDate)";
 
             using (var cmd = new SQLiteCommand(sql, con))
